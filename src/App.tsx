@@ -4,17 +4,10 @@ import React, {
   useEffect,
   createContext,
   useContext,
-<<<<<<< HEAD
   useCallback,
   useRef,
 } from "react";
 import type { ReactNode } from "react";
-=======
-  ReactNode,
-  useCallback,
-  useRef,
-} from "react";
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Info,
@@ -43,16 +36,10 @@ import {
   Bold,
   Italic,
   Trash2,
-<<<<<<< HEAD
   Settings,
 } from "lucide-react";
 import QRCodeStyling from "qr-code-styling";
 import type {
-=======
-  Settings, // Added for download settings icon
-} from "lucide-react";
-import QRCodeStyling, {
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
   Options as QRCodeStylingOptions,
   FileExtension,
   DotType,
@@ -60,12 +47,8 @@ import QRCodeStyling, {
   CornerDotType,
   Gradient,
 } from "qr-code-styling";
-<<<<<<< HEAD
 import Papa from "papaparse";
 import type { ParseResult } from "papaparse";
-=======
-import Papa, { ParseResult } from "papaparse";
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
 import JSZip from "jszip";
 
 const SIDEBAR_ITEMS = [
@@ -80,13 +63,8 @@ const DEFAULT_THEME: "light" | "dark" = "light";
 const DEFAULT_PAGE = "generator";
 const FONT_URL =
   "https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;900&family=Roboto:ital,wght@0,400;0,700;1,400;1,700&family=Oswald:wght@400;700&family=Poppins:wght@400;600&display=swap";
-<<<<<<< HEAD
 const LOCAL_STORAGE_KEY = "qrNexusState_v1";
 
-=======
-
-// UPDATED: AppContextType with new download dimension controls
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
 interface AppContextType {
   theme: "light" | "dark";
   toggleTheme: () => void;
@@ -129,11 +107,6 @@ interface AppContextType {
   setColorType: React.Dispatch<React.SetStateAction<"single" | "gradient">>;
   gradient: Gradient;
   setGradient: React.Dispatch<React.SetStateAction<Gradient>>;
-<<<<<<< HEAD
-=======
-
-  // ADDED: New state for advanced download controls
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
   downloadMode: "simple" | "advanced";
   setDownloadMode: React.Dispatch<React.SetStateAction<"simple" | "advanced">>;
   downloadWidth: number;
@@ -378,11 +351,7 @@ const CustomSelect: React.FC<{
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-<<<<<<< HEAD
         className="w-full flex items-center justify-between p-2.5 text-sm rounded-lg border border-[var(--theme-border-secondary)] bg-[var(--theme-bg-secondary)] text-[var(--theme-text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--theme-accent-primary)] focus:border-[var(--theme-accent-primary)] transition-all-theme cursor-pointer"
-=======
-        className="w-full flex items-center justify-between p-2.5 text-sm rounded-lg border border-[var(--theme-border-secondary)] bg-[var(--theme-bg-secondary)] text-[var(--theme-text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--theme-accent-primary)] focus:border-[var(--theme-accent-primary)] transition-all-theme"
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
       >
         <span>{selectedLabel}</span>
         <ChevronDown
@@ -410,11 +379,7 @@ const CustomSelect: React.FC<{
                   onChange(option.value);
                   setIsOpen(false);
                 }}
-<<<<<<< HEAD
                 className={`block px-3 py-1.5 text-sm transition-colors cursor-pointer ${
-=======
-                className={`block px-3 py-1.5 text-sm transition-colors ${
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
                   value === option.value
                     ? "bg-[var(--theme-accent-primary)] text-[var(--theme-accent-primary-text)]"
                     : "text-[var(--theme-text-primary)] hover:bg-[var(--theme-bg-tertiary)]"
@@ -449,11 +414,7 @@ const ShapeSelector: React.FC<{
           key={opt.name}
           title={opt.name}
           onClick={() => onSelect(opt.value)}
-<<<<<<< HEAD
           className={`h-10 flex items-center justify-center p-2 rounded-lg border-2 transition-all-theme text-xs font-semibold cursor-pointer ${
-=======
-          className={`h-10 flex items-center justify-center p-2 rounded-lg border-2 transition-all-theme text-xs font-semibold ${
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
             selectedValue === opt.value
               ? "border-[var(--theme-accent-primary)] bg-[var(--theme-accent-primary)] text-white"
               : "border-[var(--theme-border-secondary)] bg-[var(--theme-bg-secondary)] hover:border-[var(--theme-text-secondary)]"
@@ -496,10 +457,6 @@ const QRGeneratorPage = () => {
     setColorType,
     gradient,
     setGradient,
-<<<<<<< HEAD
-=======
-    // ADDED: New download state
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
     downloadMode,
     setDownloadMode,
     downloadWidth,
@@ -518,34 +475,21 @@ const QRGeneratorPage = () => {
   const isUpdatingWidth = useRef(false);
   const isUpdatingHeight = useRef(false);
 
-<<<<<<< HEAD
-=======
-  // Effect for Simple Mode (Quality slider controls both width and height)
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
   useEffect(() => {
     if (downloadMode === "simple") {
       setDownloadHeight(downloadWidth);
     }
   }, [downloadWidth, downloadMode, setDownloadHeight]);
 
-<<<<<<< HEAD
   useEffect(() => {
     if (downloadMode === "advanced" && !isUpdatingHeight.current) {
       isUpdatingWidth.current = true;
       setDownloadHeight(downloadWidth);
-=======
-  // Effect for Advanced Mode (Maintain 1:1 aspect ratio)
-  useEffect(() => {
-    if (downloadMode === "advanced" && !isUpdatingHeight.current) {
-        isUpdatingWidth.current = true;
-        setDownloadHeight(downloadWidth);
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
     }
     isUpdatingHeight.current = false;
   }, [downloadWidth, downloadMode, setDownloadHeight]);
 
   useEffect(() => {
-<<<<<<< HEAD
     if (downloadMode === "advanced" && !isUpdatingWidth.current) {
       isUpdatingHeight.current = true;
       setDownloadWidth(downloadHeight);
@@ -553,16 +497,6 @@ const QRGeneratorPage = () => {
     isUpdatingWidth.current = false;
   }, [downloadHeight, downloadMode, setDownloadWidth]);
 
-=======
-      if (downloadMode === 'advanced' && !isUpdatingWidth.current) {
-          isUpdatingHeight.current = true;
-          setDownloadWidth(downloadHeight);
-      }
-      isUpdatingWidth.current = false;
-  }, [downloadHeight, downloadMode, setDownloadWidth]);
-
-
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
   useEffect(() => {
     if (typeof window !== "undefined") {
       if (qrRef.current && !qrCodeInstance.current) {
@@ -654,7 +588,6 @@ const QRGeneratorPage = () => {
     }
     e.target.value = "";
   };
-<<<<<<< HEAD
 
   const handleDownload = useCallback(async () => {
     const DPI = 96;
@@ -681,28 +614,6 @@ const QRGeneratorPage = () => {
     const scaledQrMargin = Math.round(
       (qrOptions.margin || 0) * (finalPixelWidth / basePreviewWidth)
     );
-=======
-  
-  // UPDATED: handleDownload with new dimension controls and resolution-aware margin
-  const handleDownload = useCallback(async () => {
-    const DPI = 96; // Standard screen DPI, good for web and general use
-    const convertToPx = (value: number, unit: "px" | "in" | "cm" | "mm"): number => {
-        switch (unit) {
-            case 'in': return value * DPI;
-            case 'cm': return value * (DPI / 2.54);
-            case 'mm': return value * (DPI / 25.4);
-            default: return value; // px
-        }
-    };
-
-    const finalPixelWidth = Math.round(convertToPx(downloadWidth, downloadUnit));
-    
-    // The base preview width is used to calculate the scaling factor for the margin
-    const basePreviewWidth = qrOptions.width || 300;
-    
-    // The margin scales with the resolution to maintain visual consistency
-    const scaledQrMargin = Math.round((qrOptions.margin || 0) * (finalPixelWidth / basePreviewWidth));
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
 
     let foregroundOptions: Partial<QRCodeStylingOptions> = {};
     if (colorType === "gradient") {
@@ -717,11 +628,7 @@ const QRGeneratorPage = () => {
       ...qrOptions,
       ...foregroundOptions,
       width: finalPixelWidth,
-<<<<<<< HEAD
       height: finalPixelWidth,
-=======
-      height: finalPixelWidth, // QR code itself is always square
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
       margin: scaledQrMargin,
       image: logo || undefined,
       data: data || " ",
@@ -750,18 +657,10 @@ const QRGeneratorPage = () => {
         const ctx = canvas.getContext("2d");
         if (!ctx) return;
 
-<<<<<<< HEAD
         const scaleFactor = finalPixelWidth / (qrOptions.width || 300);
         const scaledFontSize = textFontSize * scaleFactor;
         const scaledTextMargin = textMargin * scaleFactor;
 
-=======
-        // The scaling factor is relative to the QR code's size, not the preview.
-        const scaleFactor = finalPixelWidth / (qrOptions.width || 300);
-        const scaledFontSize = textFontSize * scaleFactor;
-        const scaledTextMargin = textMargin * scaleFactor;
-        
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
         const fontVariant = isTextItalic ? "italic" : "normal";
         const font = `${fontVariant} ${fontWeight} ${scaledFontSize}px ${textFontFamily}`;
         ctx.font = font;
@@ -771,7 +670,6 @@ const QRGeneratorPage = () => {
           textMetrics.actualBoundingBoxAscent +
           textMetrics.actualBoundingBoxDescent;
         const backgroundVPadding = textBackgroundColor ? 10 * scaleFactor : 0;
-<<<<<<< HEAD
 
         canvas.width = finalPixelWidth;
         canvas.height =
@@ -779,14 +677,6 @@ const QRGeneratorPage = () => {
           scaledTextMargin +
           textHeight +
           backgroundVPadding * 2;
-=======
-        
-        // The QR code is square, so width and height are finalPixelWidth.
-        // The final canvas width is the QR width. The height increases for the label.
-        canvas.width = finalPixelWidth;
-        canvas.height =
-          finalPixelWidth + scaledTextMargin + textHeight + backgroundVPadding * 2;
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
 
         if (fileExt !== "png") {
           ctx.fillStyle = qrOptions.backgroundOptions?.color || "#ffffff";
@@ -855,10 +745,6 @@ const QRGeneratorPage = () => {
     showToast,
   ]);
 
-<<<<<<< HEAD
-=======
-
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
   const bodyShapes: { name: string; value: DotType }[] = [
     { name: "Square", value: "square" },
     { name: "Dots", value: "dots" },
@@ -898,15 +784,9 @@ const QRGeneratorPage = () => {
 
   const toggleFontWeight = () => {
     setFontWeight((current) => {
-<<<<<<< HEAD
       if (current === "400") return "700";
       if (current === "700") return "900";
       return "400";
-=======
-      if (current === "400") return "700"; // Normal -> Bold
-      if (current === "700") return "900"; // Bold -> Extra-Bold
-      return "400"; // Extra-Bold -> Normal
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
     });
   };
 
@@ -934,11 +814,7 @@ const QRGeneratorPage = () => {
                     value="single"
                     checked={colorType === "single"}
                     onChange={() => setColorType("single")}
-<<<<<<< HEAD
                     className="form-radio h-4 w-4 text-[var(--theme-accent-primary)] bg-[var(--theme-bg-tertiary)] border-[var(--theme-border-secondary)] focus:ring-[var(--theme-accent-primary)] cursor-pointer"
-=======
-                    className="form-radio h-4 w-4 text-[var(--theme-accent-primary)] bg-[var(--theme-bg-tertiary)] border-[var(--theme-border-secondary)] focus:ring-[var(--theme-accent-primary)]"
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
                   />
                   <span className="text-sm font-medium text-[var(--theme-text-secondary)]">
                     Single Color
@@ -951,11 +827,7 @@ const QRGeneratorPage = () => {
                     value="gradient"
                     checked={colorType === "gradient"}
                     onChange={() => setColorType("gradient")}
-<<<<<<< HEAD
                     className="form-radio h-4 w-4 text-[var(--theme-accent-primary)] bg-[var(--theme-bg-tertiary)] border-[var(--theme-border-secondary)] focus:ring-[var(--theme-accent-primary)] cursor-pointer"
-=======
-                    className="form-radio h-4 w-4 text-[var(--theme-accent-primary)] bg-[var(--theme-bg-tertiary)] border-[var(--theme-border-secondary)] focus:ring-[var(--theme-accent-primary)]"
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
                   />
                   <span className="text-sm font-medium text-[var(--theme-text-secondary)]">
                     Gradient
@@ -1183,11 +1055,7 @@ const QRGeneratorPage = () => {
                   <div className="flex justify-end">
                     <button
                       onClick={() => setLogo(null)}
-<<<<<<< HEAD
                       className="text-xs text-[var(--theme-accent-danger)] hover:underline cursor-pointer"
-=======
-                      className="text-xs text-[var(--theme-accent-danger)] hover:underline"
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
                     >
                       Remove Logo
                     </button>
@@ -1216,11 +1084,7 @@ const QRGeneratorPage = () => {
                       <button
                         onClick={toggleFontWeight}
                         title={`Set font weight (current: ${fontWeight})`}
-<<<<<<< HEAD
                         className={`p-2 rounded-lg border transition-all-theme cursor-pointer ${
-=======
-                        className={`p-2 rounded-lg border transition-all-theme ${
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
                           fontWeight !== "400"
                             ? "bg-[var(--theme-accent-primary)] text-white border-[var(--theme-accent-primary)]"
                             : "bg-[var(--theme-bg-secondary)] text-[var(--theme-text-secondary)] border-[var(--theme-border-secondary)] hover:border-[var(--theme-text-secondary)]"
@@ -1230,11 +1094,7 @@ const QRGeneratorPage = () => {
                       </button>
                       <button
                         onClick={() => setIsTextItalic(!isTextItalic)}
-<<<<<<< HEAD
                         className={`p-2 rounded-lg border transition-all-theme cursor-pointer ${
-=======
-                        className={`p-2 rounded-lg border transition-all-theme ${
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
                           isTextItalic
                             ? "bg-[var(--theme-accent-primary)] text-white border-[var(--theme-accent-primary)]"
                             : "bg-[var(--theme-bg-secondary)] text-[var(--theme-text-secondary)] border-[var(--theme-border-secondary)] hover:border-[var(--theme-text-secondary)]"
@@ -1256,11 +1116,7 @@ const QRGeneratorPage = () => {
                       {textBackgroundColor && (
                         <button
                           onClick={() => setTextBackgroundColor(null)}
-<<<<<<< HEAD
                           className="p-2 rounded-lg border bg-[var(--theme-bg-secondary)] text-[var(--theme-text-secondary)] border-[var(--theme-border-secondary)] hover:border-[var(--theme-text-secondary)] cursor-pointer"
-=======
-                          className="p-2 rounded-lg border bg-[var(--theme-bg-secondary)] text-[var(--theme-text-secondary)] border-[var(--theme-border-secondary)] hover:border-[var(--theme-text-secondary)]"
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
                           title="Clear background color"
                         >
                           <Trash2 size={16} />
@@ -1329,10 +1185,6 @@ const QRGeneratorPage = () => {
               )}
             </div>
           </Card>
-<<<<<<< HEAD
-=======
-           {/* UPDATED: Download card with new controls */}
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
           <Card
             title="Download"
             actions={
@@ -1342,17 +1194,12 @@ const QRGeneratorPage = () => {
                     p === "simple" ? "advanced" : "simple"
                   )
                 }
-<<<<<<< HEAD
                 className="p-1.5 rounded-full text-[var(--theme-text-secondary)] hover:bg-[var(--theme-bg-tertiary)] hover:text-[var(--theme-accent-primary)] transition-all-theme cursor-pointer"
                 title={
                   downloadMode === "simple"
                     ? "Advanced settings"
                     : "Simple settings"
                 }
-=======
-                className="p-1.5 rounded-full text-[var(--theme-text-secondary)] hover:bg-[var(--theme-bg-tertiary)] hover:text-[var(--theme-accent-primary)] transition-all-theme"
-                title={downloadMode === 'simple' ? 'Advanced settings' : 'Simple settings'}
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
               >
                 <Settings size={18} />
               </button>
@@ -1384,7 +1231,6 @@ const QRGeneratorPage = () => {
                       <input
                         type="number"
                         value={downloadWidth}
-<<<<<<< HEAD
                         onChange={(e) =>
                           setDownloadWidth(parseInt(e.target.value) || 0)
                         }
@@ -1398,22 +1244,10 @@ const QRGeneratorPage = () => {
                         onChange={(e) =>
                           setDownloadHeight(parseInt(e.target.value) || 0)
                         }
-=======
-                        onChange={(e) => setDownloadWidth(parseInt(e.target.value) || 0)}
-                        className="w-full p-2.5 text-sm rounded-lg border border-[var(--theme-border-secondary)] bg-[var(--theme-bg-secondary)] text-[var(--theme-text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--theme-accent-primary)]"
-                      />
-                    </LabeledInput>
-                     <LabeledInput label="Height">
-                      <input
-                        type="number"
-                        value={downloadHeight}
-                        onChange={(e) => setDownloadHeight(parseInt(e.target.value) || 0)}
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
                         className="w-full p-2.5 text-sm rounded-lg border border-[var(--theme-border-secondary)] bg-[var(--theme-bg-secondary)] text-[var(--theme-text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--theme-accent-primary)]"
                       />
                     </LabeledInput>
                   </div>
-<<<<<<< HEAD
                   <LabeledInput label="Units">
                     <CustomSelect
                       value={downloadUnit}
@@ -1421,15 +1255,6 @@ const QRGeneratorPage = () => {
                       options={unitOptions}
                     />
                   </LabeledInput>
-=======
-                   <LabeledInput label="Units">
-                      <CustomSelect
-                        value={downloadUnit}
-                        onChange={(val) => setDownloadUnit(val as any)}
-                        options={unitOptions}
-                      />
-                    </LabeledInput>
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
                 </div>
               )}
 
@@ -1442,11 +1267,7 @@ const QRGeneratorPage = () => {
                     <button
                       key={ext}
                       onClick={() => setFileExt(ext as FileExtension)}
-<<<<<<< HEAD
                       className={`px-3 py-2 text-sm font-semibold rounded-lg transition-all-theme border cursor-pointer ${
-=======
-                      className={`px-3 py-2 text-sm font-semibold rounded-lg transition-all-theme border ${
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
                         fileExt === ext
                           ? "bg-[var(--theme-accent-primary)] text-[var(--theme-accent-primary-text)] border-[var(--theme-accent-primary)]"
                           : "bg-[var(--theme-bg-secondary)] text-[var(--theme-text-secondary)] border-[var(--theme-border-secondary)] hover:border-[var(--theme-text-secondary)]"
@@ -1459,11 +1280,7 @@ const QRGeneratorPage = () => {
               </div>
               <button
                 onClick={handleDownload}
-<<<<<<< HEAD
                 className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg bg-[var(--theme-accent-primary)] text-[var(--theme-accent-primary-text)] hover:opacity-90 transition-opacity cursor-pointer"
-=======
-                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg bg-[var(--theme-accent-primary)] text-[var(--theme-accent-primary-text)] hover:opacity-90 transition-opacity"
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
               >
                 <Download size={16} /> Download
               </button>
@@ -1476,11 +1293,7 @@ const QRGeneratorPage = () => {
             </p>
             <button
               onClick={() => setShowBulkModal(true)}
-<<<<<<< HEAD
               className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg bg-[var(--theme-accent-secondary)] text-white hover:opacity-90 transition-opacity cursor-pointer"
-=======
-              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg bg-[var(--theme-accent-secondary)] text-white hover:opacity-90 transition-opacity"
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
             >
               <Upload size={16} /> Upload CSV
             </button>
@@ -1578,11 +1391,7 @@ const SettingsPage = () => {
           </div>
           <button
             onClick={toggleTheme}
-<<<<<<< HEAD
             className="flex items-center justify-center space-x-2 px-4 py-2 rounded-lg bg-[var(--theme-bg-secondary)] hover:bg-[var(--theme-bg-tertiary)] transition-all-theme text-[var(--theme-text-secondary)] group border border-[var(--theme-border-tertiary)] shadow-[var(--theme-shadow-sm)] cursor-pointer"
-=======
-            className="flex items-center justify-center space-x-2 px-4 py-2 rounded-lg bg-[var(--theme-bg-secondary)] hover:bg-[var(--theme-bg-tertiary)] transition-all-theme text-[var(--theme-text-secondary)] group border border-[var(--theme-border-tertiary)] shadow-[var(--theme-shadow-sm)]"
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
           >
             {theme === "light" ? <Moon size={16} /> : <Sun size={16} />}{" "}
             <span className="text-sm font-medium capitalize">
@@ -1658,11 +1467,7 @@ const Toast: React.FC<ToastProps> = ({ id, message, type, onDismiss }) => {
       <span className="flex-grow text-sm font-medium">{message}</span>
       <button
         onClick={() => onDismiss(id)}
-<<<<<<< HEAD
         className="ml-2.5 p-1 rounded-full hover:bg-black/15 transition-all-theme cursor-pointer"
-=======
-        className="ml-2.5 p-1 rounded-full hover:bg-black/15 transition-all-theme"
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
       >
         <X size={16} />
       </button>
@@ -1719,11 +1524,7 @@ const Sidebar: React.FC = () => {
       {!isDesktop && (
         <button
           onClick={() => setIsMobileMenuOpen(true)}
-<<<<<<< HEAD
           className="fixed top-[16px] left-4 z-[900] p-2.5 rounded-lg bg-[var(--theme-bg-primary)] text-[var(--theme-text-secondary)] shadow-[var(--theme-shadow-md)] hover:bg-[var(--theme-bg-tertiary)] transition-all-theme cursor-pointer"
-=======
-          className="fixed top-[16px] left-4 z-[900] p-2.5 rounded-lg bg-[var(--theme-bg-primary)] text-[var(--theme-text-secondary)] shadow-[var(--theme-shadow-md)] hover:bg-[var(--theme-bg-tertiary)] transition-all-theme"
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
           aria-label="Open menu"
         >
           <Menu size={22} />
@@ -1767,11 +1568,7 @@ const Sidebar: React.FC = () => {
               setCurrentPage(DEFAULT_PAGE);
               setIsMobileMenuOpen(false);
             }}
-<<<<<<< HEAD
             className="flex items-center space-x-2.5 group cursor-pointer"
-=======
-            className="flex items-center space-x-2.5 group"
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
           >
             <div className="p-2 bg-[var(--theme-accent-primary)] rounded-lg flex items-center justify-center w-9 h-9">
               <QrCode
@@ -1786,11 +1583,7 @@ const Sidebar: React.FC = () => {
           {!isDesktop && (
             <button
               onClick={() => setIsMobileMenuOpen(false)}
-<<<<<<< HEAD
               className="p-2 rounded-md hover:bg-[var(--theme-bg-tertiary)] text-[var(--theme-text-secondary)] cursor-pointer"
-=======
-              className="p-2 rounded-md hover:bg-[var(--theme-bg-tertiary)] text-[var(--theme-text-secondary)]"
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
               aria-label="Close menu"
             >
               <X size={22} />
@@ -1808,11 +1601,7 @@ const Sidebar: React.FC = () => {
                 setCurrentPage(item.path);
                 setIsMobileMenuOpen(false);
               }}
-<<<<<<< HEAD
               className={`relative group flex items-center px-3.5 py-2.5 pl-4 rounded-lg transition-all-theme text-sm font-medium cursor-pointer
-=======
-              className={`relative group flex items-center px-3.5 py-2.5 pl-4 rounded-lg transition-all-theme text-sm font-medium
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
              ${
                currentPage === item.path
                  ? "bg-[var(--theme-accent-primary)] text-[var(--theme-accent-primary-text)] shadow-[var(--theme-shadow-md)]"
@@ -1843,11 +1632,7 @@ const Sidebar: React.FC = () => {
         <div className="p-3.5 border-t border-[var(--theme-border-primary)] shrink-0">
           <button
             onClick={toggleTheme}
-<<<<<<< HEAD
             className="w-full flex items-center justify-center space-x-2 px-3 py-2.5 rounded-lg bg-[var(--theme-bg-primary)] hover:bg-[var(--theme-bg-tertiary)] transition-all-theme text-[var(--theme-text-secondary)] group border border-[var(--theme-border-tertiary)] shadow-[var(--theme-shadow-sm)] cursor-pointer"
-=======
-            className="w-full flex items-center justify-center space-x-2 px-3 py-2.5 rounded-lg bg-[var(--theme-bg-primary)] hover:bg-[var(--theme-bg-tertiary)] transition-all-theme text-[var(--theme-text-secondary)] group border border-[var(--theme-border-tertiary)] shadow-[var(--theme-shadow-sm)]"
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
             aria-label="Toggle theme"
           >
             {theme === "light" ? <Moon size={16} /> : <Sun size={16} />}{" "}
@@ -1871,11 +1656,7 @@ const Header: React.FC = () => {
         <div className="flex items-center space-x-1.5 sm:space-x-2">
           <button
             onClick={() => setShowShareModal(true)}
-<<<<<<< HEAD
             className="p-2.5 rounded-full text-[var(--theme-text-secondary)] hover:bg-[var(--theme-bg-tertiary)] hover:text-[var(--theme-accent-primary)] transition-all-theme cursor-pointer"
-=======
-            className="p-2.5 rounded-full text-[var(--theme-text-secondary)] hover:bg-[var(--theme-bg-tertiary)] hover:text-[var(--theme-accent-primary)] transition-all-theme"
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
             aria-label="Share"
           >
             <Share2 size={20} />
@@ -1969,11 +1750,7 @@ const Modal: React.FC<ModalProps> = ({
               </h3>
               <button
                 onClick={onClose}
-<<<<<<< HEAD
                 className="p-1.5 rounded-full hover:bg-[var(--theme-bg-tertiary)] text-[var(--theme-text-secondary)] transition-all-theme cursor-pointer"
-=======
-                className="p-1.5 rounded-full hover:bg-[var(--theme-bg-tertiary)] text-[var(--theme-text-secondary)] transition-all-theme"
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
               >
                 <X size={20} />
               </button>
@@ -2051,11 +1828,7 @@ const ShareModal: React.FC = () => {
             key={opt.name}
             onClick={opt.action}
             title={opt.name}
-<<<<<<< HEAD
             className={`flex flex-col items-center justify-center space-y-2 p-3 rounded-lg bg-[var(--theme-bg-secondary)] hover:bg-[var(--theme-bg-tertiary)] transition-all-theme border border-[var(--theme-border-tertiary)] aspect-square cursor-pointer`}
-=======
-            className={`flex flex-col items-center justify-center space-y-2 p-3 rounded-lg bg-[var(--theme-bg-secondary)] hover:bg-[var(--theme-bg-tertiary)] transition-all-theme border border-[var(--theme-border-tertiary)] aspect-square`}
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
           >
             <opt.icon size={24} className={`${opt.color}`} />
             <span className="text-xs text-[var(--theme-text-secondary)]">
@@ -2112,13 +1885,8 @@ const BulkGenerateModal: React.FC = () => {
       return;
     }
     if (!QRCodeStyling) {
-<<<<<<< HEAD
       showToast("QR Styling library not loaded yet. Please wait.", "error");
       return;
-=======
-        showToast("QR Styling library not loaded yet. Please wait.", "error");
-        return;
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
     }
     setIsProcessing(true);
     setProgress("Reading CSV file...");
@@ -2135,7 +1903,6 @@ const BulkGenerateModal: React.FC = () => {
         }
 
         const zip = new JSZip();
-<<<<<<< HEAD
 
         const DPI = 96;
         const convertToPx = (value: number, unit: string): number => {
@@ -2158,23 +1925,6 @@ const BulkGenerateModal: React.FC = () => {
         const scaledQrMargin = Math.round(
           (qrOptions.margin || 0) * (finalPixelWidth / basePreviewWidth)
         );
-=======
-        
-        const DPI = 96;
-        const convertToPx = (value: number, unit: string): number => {
-            switch (unit) {
-                case 'in': return value * DPI;
-                case 'cm': return value * (DPI / 2.54);
-                case 'mm': return value * (DPI / 25.4);
-                default: return value;
-            }
-        };
-
-        const finalPixelWidth = Math.round(convertToPx(downloadWidth, downloadUnit));
-        const basePreviewWidth = qrOptions.width || 300;
-        const scaledQrMargin = Math.round((qrOptions.margin || 0) * (finalPixelWidth / basePreviewWidth));
-
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
 
         const canvasToBlob = (
           canvas: HTMLCanvasElement
@@ -2304,17 +2054,10 @@ const BulkGenerateModal: React.FC = () => {
                 scaledTextMargin +
                 textHeight +
                 backgroundVPadding * 2;
-<<<<<<< HEAD
 
               if (finalOptions.backgroundOptions?.color) {
                 ctx.fillStyle = finalOptions.backgroundOptions.color;
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
-=======
-                
-              if (finalOptions.backgroundOptions?.color) {
-                  ctx.fillStyle = finalOptions.backgroundOptions.color;
-                  ctx.fillRect(0, 0, canvas.width, canvas.height);
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
               }
 
               ctx.drawImage(img, 0, 0);
@@ -2419,11 +2162,7 @@ const BulkGenerateModal: React.FC = () => {
           <div className="flex justify-end space-x-3 pt-2">
             <button
               onClick={resetModal}
-<<<<<<< HEAD
               className="px-4 py-2 text-sm font-medium rounded-lg border border-[var(--theme-border-secondary)] text-[var(--theme-text-secondary)] hover:bg-[var(--theme-bg-tertiary)] transition-all-theme cursor-pointer"
-=======
-              className="px-4 py-2 text-sm font-medium rounded-lg border border-[var(--theme-border-secondary)] text-[var(--theme-text-secondary)] hover:bg-[var(--theme-bg-tertiary)] transition-all-theme"
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
             >
               Cancel
             </button>
@@ -2472,11 +2211,7 @@ const DownloadZipModal: React.FC = () => {
         <a
           href={zipUrl}
           download="qr-nexus-bulk.zip"
-<<<<<<< HEAD
           className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 text-md font-semibold rounded-lg bg-[var(--theme-accent-primary)] text-[var(--theme-accent-primary-text)] hover:opacity-90 transition-opacity cursor-pointer"
-=======
-          className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 text-md font-semibold rounded-lg bg-[var(--theme-accent-primary)] text-[var(--theme-accent-primary-text)] hover:opacity-90 transition-opacity"
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
         >
           <Download size={20} /> Download ZIP
         </a>
@@ -2486,7 +2221,6 @@ const DownloadZipModal: React.FC = () => {
 };
 
 const App: React.FC = () => {
-<<<<<<< HEAD
   const getInitialState = () => {
     const defaultState = {
       qrOptions: {
@@ -2540,8 +2274,6 @@ const App: React.FC = () => {
     return defaultState;
   };
   
-=======
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
   const [theme, setTheme] = useState<"light" | "dark">(DEFAULT_THEME);
   const [currentPage, _setCurrentPage] = useState<string>(DEFAULT_PAGE);
   const [toasts, setToasts] = useState<Array<ToastItem>>([]);
@@ -2552,7 +2284,6 @@ const App: React.FC = () => {
   const [showDownloadZipModal, setShowDownloadZipModal] = useState(false);
   const [zipUrl, setZipUrl] = useState("");
 
-<<<<<<< HEAD
   const [initialState] = useState(getInitialState);
   
   const [data, setData] = useState(initialState.data);
@@ -2572,64 +2303,13 @@ const App: React.FC = () => {
   const [downloadUnit, setDownloadUnit] = useState<'px' | 'in' | 'cm' | 'mm'>(initialState.downloadUnit);
   const [colorType, setColorType] = useState<"single" | "gradient">(initialState.colorType);
   const [gradient, setGradient] = useState<Gradient>(initialState.gradient);
-=======
-  const [data, setData] = useState("");
-
-  const [qrOptions, setQrOptions] = useState<QRCodeStylingOptions>({
-    width: 300,
-    height: 300,
-    margin: 10,
-    imageOptions: {
-      hideBackgroundDots: true,
-      imageSize: 0.4,
-      margin: 10,
-      crossOrigin: "anonymous",
-    },
-    dotsOptions: { type: "square", color: "#000000" },
-    backgroundOptions: { color: "#ffffff" },
-    cornersSquareOptions: { type: "square", color: "#000000" },
-    cornersDotOptions: { type: "square", color: "#000000" },
-  });
-  const [logo, setLogo] = useState<string | null>(null);
-
-  const [textLabel, setTextLabel] = useState("");
-  const [textColor, setTextColor] = useState("#000000");
-  const [textMargin, setTextMargin] = useState(10);
-  const [textFontSize, setTextFontSize] = useState(16);
-  const [textFontFamily, setTextFontFamily] = useState("Lexend");
-  const [fontWeight, setFontWeight] = useState("700"); 
-  const [isTextItalic, setIsTextItalic] = useState(false);
-  const [textBackgroundColor, setTextBackgroundColor] = useState<string | null>(
-    null
-  );
-  
-  // ADDED: State for new download controls
-  const [downloadMode, setDownloadMode] = useState<'simple' | 'advanced'>('simple');
-  const [downloadWidth, setDownloadWidth] = useState(1000);
-  const [downloadHeight, setDownloadHeight] = useState(1000);
-  const [downloadUnit, setDownloadUnit] = useState<'px' | 'in' | 'cm' | 'mm'>('px');
-
-  const [colorType, setColorType] = useState<"single" | "gradient">("single");
-  const [gradient, setGradient] = useState<Gradient>({
-    type: "linear",
-    rotation: 0,
-    colorStops: [
-      { offset: 0, color: "#000000" },
-      { offset: 1, color: "#000000" },
-    ],
-  });
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
 
   useEffect(() => {
     setIsMounted(true);
     const savedTheme = localStorage.getItem("app-theme") as "light" | "dark";
-<<<<<<< HEAD
     if (savedTheme) {
       setTheme(savedTheme);
     }
-=======
-    if (savedTheme) setTheme(savedTheme);
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
 
     const hashPage = window.location.hash.substring(1);
     const validPages = Object.keys(pageComponents);
@@ -2648,7 +2328,6 @@ const App: React.FC = () => {
     }
   }, [theme, isMounted]);
 
-<<<<<<< HEAD
   useEffect(() => {
     if (!isMounted) return;
     const stateToSave = {
@@ -2681,8 +2360,6 @@ const App: React.FC = () => {
     downloadWidth, downloadHeight, downloadUnit, colorType, gradient
   ]);
 
-=======
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
   const setCurrentPage = useCallback((page: string) => {
     _setCurrentPage(page);
     window.location.hash = page;
@@ -2734,11 +2411,7 @@ const App: React.FC = () => {
     setZipUrl,
     qrOptions,
     setQrOptions,
-<<<<<<< HEAD
     data,
-=======
-    data, 
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
     setData,
     logo,
     setLogo,
@@ -2796,8 +2469,4 @@ const App: React.FC = () => {
   );
 };
 
-<<<<<<< HEAD
 export default App;
-=======
-export default App;
->>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf

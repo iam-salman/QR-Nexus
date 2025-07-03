@@ -99,7 +99,11 @@ Your `.csv` file needs a `data` column (required). All other columns are optiona
 | `dotType` | No | Style of the main QR dots. | `dots` |
 | `labelColor` | No | Color of the text label. | `#333333` |
 <<<<<<< HEAD
+<<<<<<< HEAD
 | `labelSize` | No | Font size of the label (in px). | `20` |
+=======
+| `labelSize` | No | Font size of the label (in px). | `20` |
+>>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf
 =======
 | `labelSize` | No | Font size of the label (in px). | `20` |
 >>>>>>> a17cc0fd636e04465f1c22ee7b690e5e45d045cf

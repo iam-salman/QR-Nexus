@@ -428,880 +428,920 @@ const ShapeSelector: React.FC<{
 );
 
 const QRGeneratorPage = () => {
-  const {
-    showToast,
-    setShowBulkModal,
-    qrOptions,
-    setQrOptions,
-    data,
-    setData,
-    logo,
-    setLogo,
-    textLabel,
-    setTextLabel,
-    textColor,
-    setTextColor,
-    textMargin,
-    setTextMargin,
-    textFontSize,
-    setTextFontSize,
-    textFontFamily,
-    setTextFontFamily,
-    fontWeight,
-    setFontWeight,
-    isTextItalic,
-    setIsTextItalic,
-    textBackgroundColor,
-    setTextBackgroundColor,
-    colorType,
-    setColorType,
-    gradient,
-    setGradient,
-    downloadMode,
-    setDownloadMode,
-    downloadWidth,
-    setDownloadWidth,
-    downloadHeight,
-    setDownloadHeight,
-    downloadUnit,
-    setDownloadUnit,
-  } = useAppContext();
+  const {
+    showToast,
+    setShowBulkModal,
+    qrOptions,
+    setQrOptions,
+    data,
+    setData,
+    logo,
+    setLogo,
+    textLabel,
+    setTextLabel,
+    textColor,
+    setTextColor,
+    textMargin,
+    setTextMargin,
+    textFontSize,
+    setTextFontSize,
+    textFontFamily,
+    setTextFontFamily,
+    fontWeight,
+    setFontWeight,
+    isTextItalic,
+    setIsTextItalic,
+    textBackgroundColor,
+    setTextBackgroundColor,
+    colorType,
+    setColorType,
+    gradient,
+    setGradient,
+    downloadMode,
+    setDownloadMode,
+    downloadWidth,
+    setDownloadWidth,
+    downloadHeight,
+    setDownloadHeight,
+    downloadUnit,
+    setDownloadUnit,
+  } = useAppContext();
 
-  const [fileExt, setFileExt] = useState<FileExtension>("png");
+  const [fileExt, setFileExt] = useState<FileExtension>("png");
 
-  const qrRef = useRef<HTMLDivElement>(null);
-  const qrCodeInstance = useRef<QRCodeStyling | null>(null);
+  const qrRef = useRef<HTMLDivElement>(null);
+  const qrCodeInstance = useRef<QRCodeStyling | null>(null);
 
-  const isUpdatingWidth = useRef(false);
-  const isUpdatingHeight = useRef(false);
+  const isUpdatingWidth = useRef(false);
+  const isUpdatingHeight = useRef(false);
 
-  useEffect(() => {
-    if (downloadMode === "simple") {
-      setDownloadHeight(downloadWidth);
-    }
-  }, [downloadWidth, downloadMode, setDownloadHeight]);
+  useEffect(() => {
+    if (downloadMode === "simple") {
+      setDownloadHeight(downloadWidth);
+    }
+  }, [downloadWidth, downloadMode, setDownloadHeight]);
 
-  useEffect(() => {
-    if (downloadMode === "advanced" && !isUpdatingHeight.current) {
-      isUpdatingWidth.current = true;
-      setDownloadHeight(downloadWidth);
-    }
-    isUpdatingHeight.current = false;
-  }, [downloadWidth, downloadMode, setDownloadHeight]);
+  useEffect(() => {
+    if (downloadMode === "advanced" && !isUpdatingHeight.current) {
+      isUpdatingWidth.current = true;
+      setDownloadHeight(downloadWidth);
+    }
+    isUpdatingHeight.current = false;
+  }, [downloadWidth, downloadMode, setDownloadHeight]);
 
-  useEffect(() => {
-    if (downloadMode === "advanced" && !isUpdatingWidth.current) {
-      isUpdatingHeight.current = true;
-      setDownloadWidth(downloadHeight);
-    }
-    isUpdatingWidth.current = false;
-  }, [downloadHeight, downloadMode, setDownloadWidth]);
+  useEffect(() => {
+    if (downloadMode === "advanced" && !isUpdatingWidth.current) {
+      isUpdatingHeight.current = true;
+      setDownloadWidth(downloadHeight);
+    }
+    isUpdatingWidth.current = false;
+  }, [downloadHeight, downloadMode, setDownloadWidth]);
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      if (qrRef.current && !qrCodeInstance.current) {
-        qrCodeInstance.current = new QRCodeStyling({
-          ...qrOptions,
-          data: data || " ",
-        });
-        qrCodeInstance.current.append(qrRef.current);
-      }
-    }
-  }, []);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      if (qrRef.current && !qrCodeInstance.current) {
+        qrCodeInstance.current = new QRCodeStyling({
+          ...qrOptions,
+          data: data || " ",
+        });
+        qrCodeInstance.current.append(qrRef.current);
+      }
+    }
+  }, []);
 
-  useEffect(() => {
-    if (!qrCodeInstance.current) return;
+  useEffect(() => {
+    if (!qrCodeInstance.current) return;
 
-    let finalOptions: Partial<QRCodeStylingOptions> = { ...qrOptions };
+    let finalOptions: Partial<QRCodeStylingOptions> = { ...qrOptions };
 
-    if (colorType === "gradient") {
-      finalOptions.dotsOptions = {
-        ...finalOptions.dotsOptions,
-        gradient: gradient,
-        color: undefined,
-      };
-      finalOptions.cornersSquareOptions = {
-        ...finalOptions.cornersSquareOptions,
-        gradient: gradient,
-        color: undefined,
-      };
-      finalOptions.cornersDotOptions = {
-        ...finalOptions.cornersDotOptions,
-        gradient: gradient,
-        color: undefined,
-      };
-    } else {
-      finalOptions.dotsOptions = {
-        ...finalOptions.dotsOptions,
-        color: qrOptions.dotsOptions?.color,
-        gradient: undefined,
-      };
-      finalOptions.cornersSquareOptions = {
-        ...finalOptions.cornersSquareOptions,
-        color: qrOptions.cornersSquareOptions?.color,
-        gradient: undefined,
-      };
-      finalOptions.cornersDotOptions = {
-        ...finalOptions.cornersDotOptions,
-        color: qrOptions.cornersDotOptions?.color,
-        gradient: undefined,
-      };
-    }
+    if (colorType === "gradient") {
+      finalOptions.dotsOptions = {
+        ...finalOptions.dotsOptions,
+        gradient: gradient,
+        color: undefined,
+      };
+      finalOptions.cornersSquareOptions = {
+        ...finalOptions.cornersSquareOptions,
+        gradient: gradient,
+        color: undefined,
+      };
+      finalOptions.cornersDotOptions = {
+        ...finalOptions.cornersDotOptions,
+        gradient: gradient,
+        color: undefined,
+      };
+    } else {
+      finalOptions.dotsOptions = {
+        ...finalOptions.dotsOptions,
+        color: qrOptions.dotsOptions?.color,
+        gradient: undefined,
+      };
+      finalOptions.cornersSquareOptions = {
+        ...finalOptions.cornersSquareOptions,
+        color: qrOptions.cornersSquareOptions?.color,
+        gradient: undefined,
+      };
+      finalOptions.cornersDotOptions = {
+        ...finalOptions.cornersDotOptions,
+        color: qrOptions.cornersDotOptions?.color,
+        gradient: undefined,
+      };
+    }
 
-    qrCodeInstance.current.update({
-      ...finalOptions,
-      data: data || " ",
-      image: logo || undefined,
-    });
-  }, [qrOptions, data, logo, colorType, gradient]);
+    qrCodeInstance.current.update({
+      ...finalOptions,
+      data: data || " ",
+      image: logo || undefined,
+    });
+  }, [qrOptions, data, logo, colorType, gradient]);
 
-  const handleShapeChange = (
-    optionKey:
-      | "dotsOptions"
-      | "cornersSquareOptions"
-      | "cornersDotOptions"
-      | "imageOptions",
-    value: any
-  ) => {
-    setQrOptions((prev) => ({
-      ...prev,
-      [optionKey]: {
-        ...(prev[optionKey] as object),
-        ...value,
-      },
-    }));
-  };
+  const handleShapeChange = (
+    optionKey:
+      | "dotsOptions"
+      | "cornersSquareOptions"
+      | "cornersDotOptions"
+      | "imageOptions",
+    value: any
+  ) => {
+    setQrOptions((prev) => ({
+      ...prev,
+      [optionKey]: {
+        ...(prev[optionKey] as object),
+        ...value,
+      },
+    }));
+  };
 
-  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 2 * 1024 * 1024) {
-        showToast("Logo image must be less than 2MB.", "error");
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setLogo(event.target?.result as string);
-        showToast("Logo updated successfully!", "success");
-      };
-      reader.readAsDataURL(file);
-    }
-    e.target.value = "";
-  };
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        showToast("Logo image must be less than 2MB.", "error");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setLogo(event.target?.result as string);
+        showToast("Logo updated successfully!", "success");
+      };
+      reader.readAsDataURL(file);
+    }
+    e.target.value = "";
+  };
 
-  const handleDownload = useCallback(async () => {
-    const DPI = 96;
-    const convertToPx = (
-      value: number,
-      unit: "px" | "in" | "cm" | "mm"
-    ): number => {
-      switch (unit) {
-        case "in":
-          return value * DPI;
-        case "cm":
-          return value * (DPI / 2.54);
-        case "mm":
-          return value * (DPI / 25.4);
-        default:
-          return value;
-      }
-    };
+const handleCopy = async () => {
+    if (!qrCodeInstance.current) {
+      showToast("QR Code instance not ready.", "error");
+      return;
+    }
+    try {
+      const rawData = await qrCodeInstance.current.getRawData("png");
+      if (!rawData) {
+        throw new Error("Could not get QR code data.");
+      }
+      // Cast the result to Blob, as this code only runs in the browser.
+      const blob = rawData as Blob;
+      
+      await navigator.clipboard.write([
+        new ClipboardItem({
+          "image/png": blob,
+        }),
+      ]);
+      showToast("QR Code copied to clipboard!", "success");
+    } catch (error) {
+      console.error("Failed to copy QR code:", error);
+      showToast(
+        "Failed to copy. Your browser may not support this feature.",
+        "error"
+      );
+    }
+  };
 
-    const finalPixelWidth = Math.round(convertToPx(downloadWidth, downloadUnit));
+  const handleDownload = useCallback(async () => {
+    const DPI = 96;
+    const convertToPx = (
+      value: number,
+      unit: "px" | "in" | "cm" | "mm"
+    ): number => {
+      switch (unit) {
+        case "in":
+          return value * DPI;
+        case "cm":
+          return value * (DPI / 2.54);
+        case "mm":
+          return value * (DPI / 25.4);
+        default:
+          return value;
+      }
+    };
 
-    const basePreviewWidth = qrOptions.width || 300;
+    const finalPixelWidth = Math.round(convertToPx(downloadWidth, downloadUnit));
 
-    const scaledQrMargin = Math.round(
-      (qrOptions.margin || 0) * (finalPixelWidth / basePreviewWidth)
-    );
+    const basePreviewWidth = qrOptions.width || 300;
 
-    let foregroundOptions: Partial<QRCodeStylingOptions> = {};
-    if (colorType === "gradient") {
-      foregroundOptions = {
-        dotsOptions: { ...qrOptions.dotsOptions, gradient },
-        cornersSquareOptions: { ...qrOptions.cornersSquareOptions, gradient },
-        cornersDotOptions: { ...qrOptions.cornersDotOptions, gradient },
-      };
-    }
+    const scaledQrMargin = Math.round(
+      (qrOptions.margin || 0) * (finalPixelWidth / basePreviewWidth)
+    );
 
-    const downloadQr = new QRCodeStyling({
-      ...qrOptions,
-      ...foregroundOptions,
-      width: finalPixelWidth,
-      height: finalPixelWidth,
-      margin: scaledQrMargin,
-      image: logo || undefined,
-      data: data || " ",
-    });
+    let foregroundOptions: Partial<QRCodeStylingOptions> = {};
+    if (colorType === "gradient") {
+      foregroundOptions = {
+        dotsOptions: { ...qrOptions.dotsOptions, gradient },
+        cornersSquareOptions: { ...qrOptions.cornersSquareOptions, gradient },
+        cornersDotOptions: { ...qrOptions.cornersDotOptions, gradient },
+      };
+    }
 
-    if (fileExt === "svg" || !textLabel.trim()) {
-      if (fileExt === "svg" && textLabel.trim()) {
-        showToast("Text label is not supported for SVG download.", "info");
-      }
-      downloadQr.download({
-        name: "qr-nexus-code",
-        extension: fileExt,
-      });
-      return;
-    }
+    const downloadQr = new QRCodeStyling({
+      ...qrOptions,
+      ...foregroundOptions,
+      width: finalPixelWidth,
+      height: finalPixelWidth,
+      margin: scaledQrMargin,
+      image: logo || undefined,
+      data: data || " ",
+    });
 
-    try {
-      const rawData = await downloadQr.getRawData(fileExt);
-      if (!rawData) throw new Error("Could not get QR code data.");
+    if (fileExt === "svg" || !textLabel.trim()) {
+      if (fileExt === "svg" && textLabel.trim()) {
+        showToast("Text label is not supported for SVG download.", "info");
+      }
+      downloadQr.download({
+        name: "qr-nexus-code",
+        extension: fileExt,
+      });
+      return;
+    }
 
-      const url = URL.createObjectURL(rawData as Blob);
-      const img = new Image();
+    try {
+      const rawData = await downloadQr.getRawData(fileExt);
+      if (!rawData) throw new Error("Could not get QR code data.");
 
-      img.onload = () => {
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
-        if (!ctx) return;
+      const url = URL.createObjectURL(rawData as Blob);
+      const img = new Image();
 
-        const scaleFactor = finalPixelWidth / (qrOptions.width || 300);
-        const scaledFontSize = textFontSize * scaleFactor;
-        const scaledTextMargin = textMargin * scaleFactor;
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
 
-        const fontVariant = isTextItalic ? "italic" : "normal";
-        const font = `${fontVariant} ${fontWeight} ${scaledFontSize}px ${textFontFamily}`;
-        ctx.font = font;
+        const scaleFactor = finalPixelWidth / (qrOptions.width || 300);
+        const scaledFontSize = textFontSize * scaleFactor;
+        const scaledTextMargin = textMargin * scaleFactor;
 
-        const textMetrics = ctx.measureText(textLabel);
-        const textHeight =
-          textMetrics.actualBoundingBoxAscent +
-          textMetrics.actualBoundingBoxDescent;
-        const backgroundVPadding = textBackgroundColor ? 10 * scaleFactor : 0;
+        const fontVariant = isTextItalic ? "italic" : "normal";
+        const font = `${fontVariant} ${fontWeight} ${scaledFontSize}px ${textFontFamily}`;
+        ctx.font = font;
 
-        canvas.width = finalPixelWidth;
-        canvas.height =
-          finalPixelWidth +
-          scaledTextMargin +
-          textHeight +
-          backgroundVPadding * 2;
+        const textMetrics = ctx.measureText(textLabel);
+        const textHeight =
+          textMetrics.actualBoundingBoxAscent +
+          textMetrics.actualBoundingBoxDescent;
+        const backgroundVPadding = textBackgroundColor ? 10 * scaleFactor : 0;
 
-        if (fileExt !== "png") {
-          ctx.fillStyle = qrOptions.backgroundOptions?.color || "#ffffff";
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
-        }
-        ctx.drawImage(img, 0, 0, finalPixelWidth, finalPixelWidth);
+        canvas.width = finalPixelWidth;
+        canvas.height =
+          finalPixelWidth +
+          scaledTextMargin +
+          textHeight +
+          backgroundVPadding * 2;
 
-        const labelYStart = finalPixelWidth + scaledTextMargin;
+        if (fileExt !== "png") {
+          ctx.fillStyle = qrOptions.backgroundOptions?.color || "#ffffff";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+        ctx.drawImage(img, 0, 0, finalPixelWidth, finalPixelWidth);
 
-        if (textBackgroundColor) {
-          ctx.fillStyle = textBackgroundColor;
-          ctx.fillRect(
-            0,
-            labelYStart,
-            canvas.width,
-            textHeight + backgroundVPadding * 2
-          );
-        }
+        const labelYStart = finalPixelWidth + scaledTextMargin;
 
-        ctx.font = font;
-        ctx.fillStyle = textColor;
-        ctx.textAlign = "center";
-        ctx.fillText(
-          textLabel,
-          canvas.width / 2,
-          labelYStart +
-            backgroundVPadding +
-            textMetrics.actualBoundingBoxAscent
-        );
+        if (textBackgroundColor) {
+          ctx.fillStyle = textBackgroundColor;
+          ctx.fillRect(
+            0,
+            labelYStart,
+            canvas.width,
+            textHeight + backgroundVPadding * 2
+          );
+        }
 
-        const link = document.createElement("a");
-        link.download = `qr-nexus-code-with-label.${fileExt}`;
-        link.href = canvas.toDataURL(`image/${fileExt}`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-      };
+        ctx.font = font;
+        ctx.fillStyle = textColor;
+        ctx.textAlign = "center";
+        ctx.fillText(
+          textLabel,
+          canvas.width / 2,
+          labelYStart +
+            backgroundVPadding +
+            textMetrics.actualBoundingBoxAscent
+        );
 
-      img.onerror = () => {
-        showToast("Failed to load QR image for download.", "error");
-        URL.revokeObjectURL(url);
-      };
-      img.src = url;
-    } catch (error) {
-      console.error(error);
-      showToast("An error occurred during download.", "error");
-    }
-  }, [
-    data,
-    logo,
-    qrOptions,
-    downloadWidth,
-    downloadUnit,
-    colorType,
-    gradient,
-    fileExt,
-    textLabel,
-    textColor,
-    textMargin,
-    textFontSize,
-    textFontFamily,
-    fontWeight,
-    isTextItalic,
-    textBackgroundColor,
-    showToast,
-  ]);
+        const link = document.createElement("a");
+        link.download = `qr-nexus-code-with-label.${fileExt}`;
+        link.href = canvas.toDataURL(`image/${fileExt}`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      };
 
-  const bodyShapes: { name: string; value: DotType }[] = [
-    { name: "Square", value: "square" },
-    { name: "Dots", value: "dots" },
-    { name: "Rounded", value: "rounded" },
-    { name: "Extra Rounded", value: "extra-rounded" },
-    { name: "Classy", value: "classy" },
-    { name: "Classy Rounded", value: "classy-rounded" },
-  ];
-  const eyeFrameShapes: { name: string; value: CornerSquareType }[] = [
-    { name: "Square", value: "square" },
-    { name: "Extra Rounded", value: "extra-rounded" },
-    { name: "Dot", value: "dot" },
-  ];
-  const eyeBallShapes: { name: string; value: CornerDotType }[] = [
-    { name: "Square", value: "square" },
-    { name: "Dot", value: "dot" },
-  ];
+      img.onerror = () => {
+        showToast("Failed to load QR image for download.", "error");
+        URL.revokeObjectURL(url);
+      };
+      img.src = url;
+    } catch (error) {
+      console.error(error);
+      showToast("An error occurred during download.", "error");
+    }
+  }, [
+    data,
+    logo,
+    qrOptions,
+    downloadWidth,
+    downloadUnit,
+    colorType,
+    gradient,
+    fileExt,
+    textLabel,
+    textColor,
+    textMargin,
+    textFontSize,
+    textFontFamily,
+    fontWeight,
+    isTextItalic,
+    textBackgroundColor,
+    showToast,
+  ]);
 
-  const fontOptions = [
-    { value: "Lexend", label: "Lexend" },
-    { value: "Roboto", label: "Roboto" },
-    { value: "Oswald", label: "Oswald" },
-    { value: "Poppins", label: "Poppins" },
-    { value: "Arial", label: "Arial" },
-    { value: "Helvetica", label: "Helvetica" },
-    { value: "Verdana", label: "Verdana" },
-    { value: "Times New Roman", label: "Times New Roman" },
-    { value: "Courier New", label: "Courier New" },
-  ];
+  const bodyShapes: { name: string; value: DotType }[] = [
+    { name: "Square", value: "square" },
+    { name: "Dots", value: "dots" },
+    { name: "Rounded", value: "rounded" },
+    { name: "Extra Rounded", value: "extra-rounded" },
+    { name: "Classy", value: "classy" },
+    { name: "Classy Rounded", value: "classy-rounded" },
+  ];
+  const eyeFrameShapes: { name: string; value: CornerSquareType }[] = [
+    { name: "Square", value: "square" },
+    { name: "Extra Rounded", value: "extra-rounded" },
+    { name: "Dot", value: "dot" },
+  ];
+  const eyeBallShapes: { name: string; value: CornerDotType }[] = [
+    { name: "Square", value: "square" },
+    { name: "Dot", value: "dot" },
+  ];
 
-  const unitOptions = [
-    { value: "px", label: "Pixels (px)" },
-    { value: "in", label: "Inches (in)" },
-    { value: "cm", label: "Centimeters (cm)" },
-    { value: "mm", label: "Millimeters (mm)" },
-  ];
+  const fontOptions = [
+    { value: "Lexend", label: "Lexend" },
+    { value: "Roboto", label: "Roboto" },
+    { value: "Oswald", label: "Oswald" },
+    { value: "Poppins", label: "Poppins" },
+    { value: "Arial", label: "Arial" },
+    { value: "Helvetica", label: "Helvetica" },
+    { value: "Verdana", label: "Verdana" },
+    { value: "Times New Roman", label: "Times New Roman" },
+    { value: "Courier New", label: "Courier New" },
+  ];
 
-  const toggleFontWeight = () => {
-    setFontWeight((current) => {
-      if (current === "400") return "700";
-      if (current === "700") return "900";
-      return "400";
-    });
-  };
+  const unitOptions = [
+    { value: "px", label: "Pixels (px)" },
+    { value: "in", label: "Inches (in)" },
+    { value: "cm", label: "Centimeters (cm)" },
+    { value: "mm", label: "Millimeters (mm)" },
+  ];
 
-  return (
-    <PageWrapper title="QR Code Generator">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 xl:gap-8">
-        <Card className="lg:col-span-2" noPadding>
-          <div className="p-5 sm:p-6 max-h-[calc(100vh+220px)] overflow-y-auto">
-            <OptionSection title="Content" icon={Type}>
-              <textarea
-                value={data}
-                onChange={(e) => setData(e.target.value)}
-                rows={4}
-                placeholder="Enter URL or text"
-                className="w-full p-2.5 text-sm rounded-lg border border-[var(--theme-border-secondary)] bg-[var(--theme-bg-secondary)] text-[var(--theme-text-primary)] placeholder-[var(--theme-text-tertiary)] focus:outline-none focus:ring-1 focus:ring-[var(--theme-accent-primary)] focus:border-[var(--theme-accent-primary)] transition-all-theme"
-              />
-            </OptionSection>
+  const toggleFontWeight = () => {
+    setFontWeight((current) => {
+      if (current === "400") return "700";
+      if (current === "700") return "900";
+      return "400";
+    });
+  };
 
-            <OptionSection title="Colors" icon={Palette}>
-              <div className="flex items-center gap-4 mb-4">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="colorType"
-                    value="single"
-                    checked={colorType === "single"}
-                    onChange={() => setColorType("single")}
-                    className="form-radio h-4 w-4 text-[var(--theme-accent-primary)] bg-[var(--theme-bg-tertiary)] border-[var(--theme-border-secondary)] focus:ring-[var(--theme-accent-primary)] cursor-pointer"
-                  />
-                  <span className="text-sm font-medium text-[var(--theme-text-secondary)]">
-                    Single Color
-                  </span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="colorType"
-                    value="gradient"
-                    checked={colorType === "gradient"}
-                    onChange={() => setColorType("gradient")}
-                    className="form-radio h-4 w-4 text-[var(--theme-accent-primary)] bg-[var(--theme-bg-tertiary)] border-[var(--theme-border-secondary)] focus:ring-[var(--theme-accent-primary)] cursor-pointer"
-                  />
-                  <span className="text-sm font-medium text-[var(--theme-text-secondary)]">
-                    Gradient
-                  </span>
-                </label>
-              </div>
-              {colorType === "single" ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <LabeledInput label="Foreground">
-                    <ColorInput
-                      value={qrOptions.dotsOptions?.color || "#000000"}
-                      onChange={(color) =>
-                        setQrOptions((prev) => ({
-                          ...prev,
-                          dotsOptions: { ...prev.dotsOptions, color },
-                        }))
-                      }
-                    />
-                  </LabeledInput>
-                  <LabeledInput label="Background">
-                    <ColorInput
-                      value={qrOptions.backgroundOptions?.color || "#FFFFFF"}
-                      onChange={(color) =>
-                        setQrOptions((prev) => ({
-                          ...prev,
-                          backgroundOptions: {
-                            ...prev.backgroundOptions,
-                            color,
-                          },
-                        }))
-                      }
-                    />
-                  </LabeledInput>
-                  <LabeledInput label="Eye Frame">
-                    <ColorInput
-                      value={qrOptions.cornersSquareOptions?.color || "#000000"}
-                      onChange={(color) =>
-                        setQrOptions((prev) => ({
-                          ...prev,
-                          cornersSquareOptions: {
-                            ...prev.cornersSquareOptions,
-                            color,
-                          },
-                        }))
-                      }
-                    />
-                  </LabeledInput>
-                  <LabeledInput label="Eye Ball">
-                    <ColorInput
-                      value={qrOptions.cornersDotOptions?.color || "#000000"}
-                      onChange={(color) =>
-                        setQrOptions((prev) => ({
-                          ...prev,
-                          cornersDotOptions: {
-                            ...prev.cornersDotOptions,
-                            color,
-                          },
-                        }))
-                      }
-                    />
-                  </LabeledInput>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <LabeledInput label="Gradient Start">
-                      <ColorInput
-                        value={gradient.colorStops[0].color}
-                        onChange={(color) =>
-                          setGradient((g) => ({
-                            ...g,
-                            colorStops: [
-                              { ...g.colorStops[0], color },
-                              g.colorStops[1],
-                            ],
-                          }))
-                        }
-                      />
-                    </LabeledInput>
-                    <LabeledInput label="Gradient End">
-                      <ColorInput
-                        value={gradient.colorStops[1].color}
-                        onChange={(color) =>
-                          setGradient((g) => ({
-                            ...g,
-                            colorStops: [
-                              g.colorStops[0],
-                              { ...g.colorStops[1], color },
-                            ],
-                          }))
-                        }
-                      />
-                    </LabeledInput>
-                  </div>
-                  <LabeledInput label="Background">
-                    <ColorInput
-                      value={qrOptions.backgroundOptions?.color || "#FFFFFF"}
-                      onChange={(color) =>
-                        setQrOptions((prev) => ({
-                          ...prev,
-                          backgroundOptions: {
-                            ...prev.backgroundOptions,
-                            color,
-                          },
-                        }))
-                      }
-                    />
-                  </LabeledInput>
-                  <LabeledInput label="Gradient Type">
-                    <CustomSelect
-                      value={gradient.type}
-                      onChange={(type: string) =>
-                        setGradient((g) => ({
-                          ...g,
-                          type: type as "linear" | "radial",
-                        }))
-                      }
-                      options={[
-                        { value: "linear", label: "Linear" },
-                        { value: "radial", label: "Radial" },
-                      ]}
-                    />
-                  </LabeledInput>
-                  <LabeledInput label="Rotation">
-                    <input
-                      type="range"
-                      min="0"
-                      max="360"
-                      value={gradient.rotation}
-                      onChange={(e) =>
-                        setGradient((g) => ({
-                          ...g,
-                          rotation: parseInt(e.target.value),
-                        }))
-                      }
-                    />
-                  </LabeledInput>
-                </div>
-              )}
-            </OptionSection>
+  return (
+    <PageWrapper title="QR Code Generator">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 xl:gap-8">
+        <Card className="lg:col-span-2" noPadding>
+          <div className="p-5 sm:p-6 max-h-[calc(100vh+220px)] overflow-y-auto">
+            <OptionSection title="Content" icon={Type}>
+              <textarea
+                value={data}
+                onChange={(e) => setData(e.target.value)}
+                rows={4}
+                placeholder="Enter URL or text"
+                className="w-full p-2.5 text-sm rounded-lg border border-[var(--theme-border-secondary)] bg-[var(--theme-bg-secondary)] text-[var(--theme-text-primary)] placeholder-[var(--theme-text-tertiary)] focus:outline-none focus:ring-1 focus:ring-[var(--theme-accent-primary)] focus:border-[var(--theme-accent-primary)] transition-all-theme"
+              />
+            </OptionSection>
 
-            <OptionSection title="Shapes" icon={Brush}>
-              <div className="space-y-4">
-                <ShapeSelector
-                  title="Body Shape"
-                  options={bodyShapes}
-                  selectedValue={qrOptions.dotsOptions?.type || "square"}
-                  onSelect={(value) =>
-                    handleShapeChange("dotsOptions", { type: value })
-                  }
-                />
-                <ShapeSelector
-                  title="Eye Frame Shape"
-                  options={eyeFrameShapes}
-                  selectedValue={
-                    qrOptions.cornersSquareOptions?.type || "square"
-                  }
-                  onSelect={(value) =>
-                    handleShapeChange("cornersSquareOptions", { type: value })
-                  }
-                />
-                <ShapeSelector
-                  title="Eye Ball Shape"
-                  options={eyeBallShapes}
-                  selectedValue={qrOptions.cornersDotOptions?.type || "square"}
-                  onSelect={(value) =>
-                    handleShapeChange("cornersDotOptions", { type: value })
-                  }
-                />
-                <LabeledInput label="QR Margin">
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      step="5"
-                      value={qrOptions.margin || 0}
-                      onChange={(e) =>
-                        setQrOptions((prev) => ({
-                          ...prev,
-                          margin: parseInt(e.target.value, 10),
-                        }))
-                      }
-                    />
-                    <span className="text-xs font-mono text-[var(--theme-text-tertiary)]">
-                      {qrOptions.margin || 0}
-                    </span>
-                  </div>
-                </LabeledInput>
-              </div>
-            </OptionSection>
+            <OptionSection title="Colors" icon={Palette}>
+              <div className="flex items-center gap-4 mb-4">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="colorType"
+                    value="single"
+                    checked={colorType === "single"}
+                    onChange={() => setColorType("single")}
+                    className="form-radio h-4 w-4 text-[var(--theme-accent-primary)] bg-[var(--theme-bg-tertiary)] border-[var(--theme-border-secondary)] focus:ring-[var(--theme-accent-primary)] cursor-pointer"
+                  />
+                  <span className="text-sm font-medium text-[var(--theme-text-secondary)]">
+                    Single Color
+                  </span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="colorType"
+                    value="gradient"
+                    checked={colorType === "gradient"}
+                    onChange={() => setColorType("gradient")}
+                    className="form-radio h-4 w-4 text-[var(--theme-accent-primary)] bg-[var(--theme-bg-tertiary)] border-[var(--theme-border-secondary)] focus:ring-[var(--theme-accent-primary)] cursor-pointer"
+                  />
+                  <span className="text-sm font-medium text-[var(--theme-text-secondary)]">
+                    Gradient
+                  </span>
+                </label>
+              </div>
+              {colorType === "single" ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <LabeledInput label="Foreground">
+                    <ColorInput
+                      value={qrOptions.dotsOptions?.color || "#000000"}
+                      onChange={(color) =>
+                        setQrOptions((prev) => ({
+                          ...prev,
+                          dotsOptions: { ...prev.dotsOptions, color },
+                        }))
+                      }
+                    />
+                  </LabeledInput>
+                  <LabeledInput label="Background">
+                    <ColorInput
+                      value={qrOptions.backgroundOptions?.color || "#FFFFFF"}
+                      onChange={(color) =>
+                        setQrOptions((prev) => ({
+                          ...prev,
+                          backgroundOptions: {
+                            ...prev.backgroundOptions,
+                            color,
+                          },
+                        }))
+                      }
+                    />
+                  </LabeledInput>
+                  <LabeledInput label="Eye Frame">
+                    <ColorInput
+                      value={qrOptions.cornersSquareOptions?.color || "#000000"}
+                      onChange={(color) =>
+                        setQrOptions((prev) => ({
+                          ...prev,
+                          cornersSquareOptions: {
+                            ...prev.cornersSquareOptions,
+                            color,
+                          },
+                        }))
+                      }
+                    />
+                  </LabeledInput>
+                  <LabeledInput label="Eye Ball">
+                    <ColorInput
+                      value={qrOptions.cornersDotOptions?.color || "#000000"}
+                      onChange={(color) =>
+                        setQrOptions((prev) => ({
+                          ...prev,
+                          cornersDotOptions: {
+                            ...prev.cornersDotOptions,
+                            color,
+                          },
+                        }))
+                      }
+                    />
+                  </LabeledInput>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <LabeledInput label="Gradient Start">
+                      <ColorInput
+                        value={gradient.colorStops[0].color}
+                        onChange={(color) =>
+                          setGradient((g) => ({
+                            ...g,
+                            colorStops: [
+                              { ...g.colorStops[0], color },
+                              g.colorStops[1],
+                            ],
+                          }))
+                        }
+                      />
+                    </LabeledInput>
+                    <LabeledInput label="Gradient End">
+                      <ColorInput
+                        value={gradient.colorStops[1].color}
+                        onChange={(color) =>
+                          setGradient((g) => ({
+                            ...g,
+                            colorStops: [
+                              g.colorStops[0],
+                              { ...g.colorStops[1], color },
+                            ],
+                          }))
+                        }
+                      />
+                    </LabeledInput>
+                  </div>
+                  <LabeledInput label="Background">
+                    <ColorInput
+                      value={qrOptions.backgroundOptions?.color || "#FFFFFF"}
+                      onChange={(color) =>
+                        setQrOptions((prev) => ({
+                          ...prev,
+                          backgroundOptions: {
+                            ...prev.backgroundOptions,
+                            color,
+                          },
+                        }))
+                      }
+                    />
+                  </LabeledInput>
+                  <LabeledInput label="Gradient Type">
+                    <CustomSelect
+                      value={gradient.type}
+                      onChange={(type: string) =>
+                        setGradient((g) => ({
+                          ...g,
+                          type: type as "linear" | "radial",
+                        }))
+                      }
+                      options={[
+                        { value: "linear", label: "Linear" },
+                        { value: "radial", label: "Radial" },
+                      ]}
+                    />
+                  </LabeledInput>
+                  <LabeledInput label="Rotation">
+                    <input
+                      type="range"
+                      min="0"
+                      max="360"
+                      value={gradient.rotation}
+                      onChange={(e) =>
+                        setGradient((g) => ({
+                          ...g,
+                          rotation: parseInt(e.target.value),
+                        }))
+                      }
+                    />
+                  </LabeledInput>
+                </div>
+              )}
+            </OptionSection>
 
-            <OptionSection title="Logo" icon={ImagePlus}>
-              <LabeledInput label="Upload Image">
-                <label
-                  htmlFor="logo-upload"
-                  className="w-full block text-center cursor-pointer px-4 py-2 text-sm font-medium rounded-lg border border-[var(--theme-border-secondary)] text-[var(--theme-text-secondary)] hover:bg-[var(--theme-bg-tertiary)] transition-all-theme"
-                >
-                  {logo ? "Change Logo" : "Select Logo"}
-                </label>
-                <input
-                  type="file"
-                  id="logo-upload"
-                  accept="image/png, image/jpeg, image/svg+xml"
-                  className="hidden"
-                  onChange={handleLogoUpload}
-                />
-              </LabeledInput>
-              {logo && (
-                <>
-                  <LabeledInput label="Logo Size">
-                    <input
-                      type="range"
-                      min="0.1"
-                      max="0.8"
-                      step="0.05"
-                      value={qrOptions.imageOptions?.imageSize}
-                      onChange={(e) =>
-                        handleShapeChange("imageOptions", {
-                          imageSize: parseFloat(e.target.value),
-                        })
-                      }
-                    />
-                  </LabeledInput>
-                  <div className="flex justify-end">
-                    <button
-                      onClick={() => setLogo(null)}
-                      className="text-xs text-[var(--theme-accent-danger)] hover:underline cursor-pointer"
-                    >
-                      Remove Logo
-                    </button>
-                  </div>
-                </>
-              )}
-            </OptionSection>
+            <OptionSection title="Shapes" icon={Brush}>
+              <div className="space-y-4">
+                <ShapeSelector
+                  title="Body Shape"
+                  options={bodyShapes}
+                  selectedValue={qrOptions.dotsOptions?.type || "square"}
+                  onSelect={(value) =>
+                    handleShapeChange("dotsOptions", { type: value })
+                  }
+                />
+                <ShapeSelector
+                  title="Eye Frame Shape"
+                  options={eyeFrameShapes}
+                  selectedValue={
+                    qrOptions.cornersSquareOptions?.type || "square"
+                  }
+                  onSelect={(value) =>
+                    handleShapeChange("cornersSquareOptions", { type: value })
+                  }
+                />
+                <ShapeSelector
+                  title="Eye Ball Shape"
+                  options={eyeBallShapes}
+                  selectedValue={qrOptions.cornersDotOptions?.type || "square"}
+                  onSelect={(value) =>
+                    handleShapeChange("cornersDotOptions", { type: value })
+                  }
+                />
+                <LabeledInput label="QR Margin">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      step="5"
+                      value={qrOptions.margin || 0}
+                      onChange={(e) =>
+                        setQrOptions((prev) => ({
+                          ...prev,
+                          margin: parseInt(e.target.value, 10),
+                        }))
+                      }
+                    />
+                    <span className="text-xs font-mono text-[var(--theme-text-tertiary)]">
+                      {qrOptions.margin || 0}
+                    </span>
+                  </div>
+                </LabeledInput>
+              </div>
+            </OptionSection>
 
-            <OptionSection title="Text Label" icon={Type}>
-              <LabeledInput label="Text">
-                <input
-                  type="text"
-                  value={textLabel}
-                  onChange={(e) => setTextLabel(e.target.value)}
-                  placeholder="Text below QR code"
-                  className="w-full p-2.5 text-sm rounded-lg border border-[var(--theme-border-secondary)] bg-[var(--theme-bg-secondary)] text-[var(--theme-text-primary)] placeholder-[var(--theme-text-tertiary)] focus:outline-none focus:ring-1 focus:ring-[var(--theme-accent-primary)] focus:border-[var(--theme-accent-primary)] transition-all-theme"
-                />
-              </LabeledInput>
-              {textLabel.trim() && (
-                <>
-                  <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
-                    <p className="text-sm text-[var(--theme-text-secondary)] font-medium md:w-1/4 shrink-0">
-                      Format
-                    </p>
-                    <div className="flex-grow flex items-center gap-2">
-                      <button
-                        onClick={toggleFontWeight}
-                        title={`Set font weight (current: ${fontWeight})`}
-                        className={`p-2 rounded-lg border transition-all-theme cursor-pointer ${
-                          fontWeight !== "400"
-                            ? "bg-[var(--theme-accent-primary)] text-white border-[var(--theme-accent-primary)]"
-                            : "bg-[var(--theme-bg-secondary)] text-[var(--theme-text-secondary)] border-[var(--theme-border-secondary)] hover:border-[var(--theme-text-secondary)]"
-                        }`}
-                      >
-                        <Bold size={16} />
-                      </button>
-                      <button
-                        onClick={() => setIsTextItalic(!isTextItalic)}
-                        className={`p-2 rounded-lg border transition-all-theme cursor-pointer ${
-                          isTextItalic
-                            ? "bg-[var(--theme-accent-primary)] text-white border-[var(--theme-accent-primary)]"
-                            : "bg-[var(--theme-bg-secondary)] text-[var(--theme-text-secondary)] border-[var(--theme-border-secondary)] hover:border-[var(--theme-text-secondary)]"
-                        }`}
-                      >
-                        <Italic size={16} />
-                      </button>
-                    </div>
-                  </div>
-                  <LabeledInput label="Text Color">
-                    <ColorInput value={textColor} onChange={setTextColor} />
-                  </LabeledInput>
-                  <LabeledInput label="Label Background">
-                    <div className="flex items-center gap-2">
-                      <ColorInput
-                        value={textBackgroundColor || "#FFFFFF"}
-                        onChange={setTextBackgroundColor}
-                      />
-                      {textBackgroundColor && (
-                        <button
-                          onClick={() => setTextBackgroundColor(null)}
-                          className="p-2 rounded-lg border bg-[var(--theme-bg-secondary)] text-[var(--theme-text-secondary)] border-[var(--theme-border-secondary)] hover:border-[var(--theme-text-secondary)] cursor-pointer"
-                          title="Clear background color"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      )}
-                    </div>
-                  </LabeledInput>
-                  <LabeledInput label="Font">
-                    <CustomSelect
-                      value={textFontFamily}
-                      onChange={setTextFontFamily}
-                      options={fontOptions}
-                    />
-                  </LabeledInput>
-                  <LabeledInput label="Font Size">
-                    <input
-                      type="range"
-                      min="8"
-                      max="40"
-                      step="1"
-                      value={textFontSize}
-                      onChange={(e) =>
-                        setTextFontSize(parseInt(e.target.value))
-                      }
-                    />
-                  </LabeledInput>
-                  <LabeledInput label="Top Margin">
-                    <input
-                      type="range"
-                      min="0"
-                      max="50"
-                      step="1"
-                      value={textMargin}
-                      onChange={(e) => setTextMargin(parseInt(e.target.value))}
-                    />
-                  </LabeledInput>
-                </>
-              )}
-            </OptionSection>
-          </div>
-        </Card>
+            <OptionSection title="Logo" icon={ImagePlus}>
+              <LabeledInput label="Upload Image">
+                <label
+                  htmlFor="logo-upload"
+                  className="w-full block text-center cursor-pointer px-4 py-2 text-sm font-medium rounded-lg border border-[var(--theme-border-secondary)] text-[var(--theme-text-secondary)] hover:bg-[var(--theme-bg-tertiary)] transition-all-theme"
+                >
+                  {logo ? "Change Logo" : "Select Logo"}
+                </label>
+                <input
+                  type="file"
+                  id="logo-upload"
+                  accept="image/png, image/jpeg, image/svg+xml"
+                  className="hidden"
+                  onChange={handleLogoUpload}
+                />
+              </LabeledInput>
+              {logo && (
+                <>
+                  <LabeledInput label="Logo Size">
+                    <input
+                      type="range"
+                      min="0.1"
+                      max="0.8"
+                      step="0.05"
+                      value={qrOptions.imageOptions?.imageSize}
+                      onChange={(e) =>
+                        handleShapeChange("imageOptions", {
+                          imageSize: parseFloat(e.target.value),
+                        })
+                      }
+                    />
+                  </LabeledInput>
+                  <div className="flex justify-end">
+                    <button
+                      onClick={() => setLogo(null)}
+                      className="text-xs text-[var(--theme-accent-danger)] hover:underline cursor-pointer"
+                    >
+                      Remove Logo
+                    </button>
+                  </div>
+                </>
+              )}
+            </OptionSection>
 
-        <div className="lg:col-span-1 flex flex-col gap-6">
-          <Card title="Preview" className="flex-grow">
-            <div className="p-4 bg-[var(--theme-bg-secondary)] rounded-lg flex flex-col items-center justify-center">
-              <div
-                ref={qrRef}
-                className="[&>canvas]:!w-full [&>canvas]:!h-auto [&>svg]:!w-full [&>svg]:!h-auto"
-              />
-              {textLabel && (
-                <p
-                  className="text-center break-words w-full"
-                  style={{
-                    color: textColor,
-                    backgroundColor: textBackgroundColor || "transparent",
-                    marginTop: `${textMargin}px`,
-                    padding: textBackgroundColor ? "10px 5px" : "0",
-                    fontSize: `${textFontSize}px`,
-                    fontFamily: textFontFamily,
-                    fontWeight: fontWeight,
-                    fontStyle: isTextItalic ? "italic" : "normal",
-                  }}
-                >
-                  {textLabel}
-                </p>
-              )}
-            </div>
-          </Card>
-          <Card
-            title="Download"
-            actions={
-              <button
-                onClick={() =>
-                  setDownloadMode((p) =>
-                    p === "simple" ? "advanced" : "simple"
-                  )
-                }
-                className="p-1.5 rounded-full text-[var(--theme-text-secondary)] hover:bg-[var(--theme-bg-tertiary)] hover:text-[var(--theme-accent-primary)] transition-all-theme cursor-pointer"
-                title={
-                  downloadMode === "simple"
-                    ? "Advanced settings"
-                    : "Simple settings"
-                }
-              >
-                <Settings size={18} />
-              </button>
-            }
-          >
-            <div className="space-y-4">
-              {downloadMode === "simple" ? (
-                <LabeledInput label="Quality">
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="range"
-                      min="300"
-                      max="4000"
-                      step="100"
-                      value={downloadWidth}
-                      onChange={(e) =>
-                        setDownloadWidth(parseInt(e.target.value))
-                      }
-                    />
-                    <span className="text-xs font-mono text-[var(--theme-text-tertiary)]">
-                      {downloadWidth}px
-                    </span>
-                  </div>
-                </LabeledInput>
-              ) : (
-                <div className="space-y-3">
-                  <div className="grid grid-cols-2 gap-3">
-                    <LabeledInput label="Width">
-                      <input
-                        type="number"
-                        value={downloadWidth}
-                        onChange={(e) =>
-                          setDownloadWidth(parseInt(e.target.value) || 0)
-                        }
-                        className="w-full p-2.5 text-sm rounded-lg border border-[var(--theme-border-secondary)] bg-[var(--theme-bg-secondary)] text-[var(--theme-text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--theme-accent-primary)]"
-                      />
-                    </LabeledInput>
-                    <LabeledInput label="Height">
-                      <input
-                        type="number"
-                        value={downloadHeight}
-                        onChange={(e) =>
-                          setDownloadHeight(parseInt(e.target.value) || 0)
-                        }
-                        className="w-full p-2.5 text-sm rounded-lg border border-[var(--theme-border-secondary)] bg-[var(--theme-bg-secondary)] text-[var(--theme-text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--theme-accent-primary)]"
-                      />
-                    </LabeledInput>
-                  </div>
-                  <LabeledInput label="Units">
-                    <CustomSelect
-                      value={downloadUnit}
-                      onChange={(val) => setDownloadUnit(val as any)}
-                      options={unitOptions}
-                    />
-                  </LabeledInput>
-                </div>
-              )}
+            <OptionSection title="Text Label" icon={Type}>
+              <LabeledInput label="Text">
+                <input
+                  type="text"
+                  value={textLabel}
+                  onChange={(e) => setTextLabel(e.target.value)}
+                  placeholder="Text below QR code"
+                  className="w-full p-2.5 text-sm rounded-lg border border-[var(--theme-border-secondary)] bg-[var(--theme-bg-secondary)] text-[var(--theme-text-primary)] placeholder-[var(--theme-text-tertiary)] focus:outline-none focus:ring-1 focus:ring-[var(--theme-accent-primary)] focus:border-[var(--theme-accent-primary)] transition-all-theme"
+                />
+              </LabeledInput>
+              {textLabel.trim() && (
+                <>
+                  <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+                    <p className="text-sm text-[var(--theme-text-secondary)] font-medium md:w-1/4 shrink-0">
+                      Format
+                    </p>
+                    <div className="flex-grow flex items-center gap-2">
+                      <button
+                        onClick={toggleFontWeight}
+                        title={`Set font weight (current: ${fontWeight})`}
+                        className={`p-2 rounded-lg border transition-all-theme cursor-pointer ${
+                          fontWeight !== "400"
+                            ? "bg-[var(--theme-accent-primary)] text-white border-[var(--theme-accent-primary)]"
+                            : "bg-[var(--theme-bg-secondary)] text-[var(--theme-text-secondary)] border-[var(--theme-border-secondary)] hover:border-[var(--theme-text-secondary)]"
+                        }`}
+                      >
+                        <Bold size={16} />
+                      </button>
+                      <button
+                        onClick={() => setIsTextItalic(!isTextItalic)}
+                        className={`p-2 rounded-lg border transition-all-theme cursor-pointer ${
+                          isTextItalic
+                            ? "bg-[var(--theme-accent-primary)] text-white border-[var(--theme-accent-primary)]"
+                            : "bg-[var(--theme-bg-secondary)] text-[var(--theme-text-secondary)] border-[var(--theme-border-secondary)] hover:border-[var(--theme-text-secondary)]"
+                        }`}
+                      >
+                        <Italic size={16} />
+                      </button>
+                    </div>
+                  </div>
+                  <LabeledInput label="Text Color">
+                    <ColorInput value={textColor} onChange={setTextColor} />
+                  </LabeledInput>
+                  <LabeledInput label="Label Background">
+                    <div className="flex items-center gap-2">
+                      <ColorInput
+                        value={textBackgroundColor || "#FFFFFF"}
+                        onChange={setTextBackgroundColor}
+                      />
+                      {textBackgroundColor && (
+                        <button
+                          onClick={() => setTextBackgroundColor(null)}
+                          className="p-2 rounded-lg border bg-[var(--theme-bg-secondary)] text-[var(--theme-text-secondary)] border-[var(--theme-border-secondary)] hover:border-[var(--theme-text-secondary)] cursor-pointer"
+                          title="Clear background color"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      )}
+                    </div>
+                  </LabeledInput>
+                  <LabeledInput label="Font">
+                    <CustomSelect
+                      value={textFontFamily}
+                      onChange={setTextFontFamily}
+                      options={fontOptions}
+                    />
+                  </LabeledInput>
+                  <LabeledInput label="Font Size">
+                    <input
+                      type="range"
+                      min="8"
+                      max="40"
+                      step="1"
+                      value={textFontSize}
+                      onChange={(e) =>
+                        setTextFontSize(parseInt(e.target.value))
+                      }
+                    />
+                  </LabeledInput>
+                  <LabeledInput label="Top Margin">
+                    <input
+                      type="range"
+                      min="0"
+                      max="50"
+                      step="1"
+                      value={textMargin}
+                      onChange={(e) => setTextMargin(parseInt(e.target.value))}
+                    />
+                  </LabeledInput>
+                </>
+              )}
+            </OptionSection>
+          </div>
+        </Card>
 
-              <div>
-                <p className="text-sm font-medium text-[var(--theme-text-secondary)] mb-2">
-                  Format
-                </p>
-                <div className="grid grid-cols-4 gap-2">
-                  {["png", "jpeg", "webp", "svg"].map((ext) => (
-                    <button
-                      key={ext}
-                      onClick={() => setFileExt(ext as FileExtension)}
-                      className={`px-3 py-2 text-sm font-semibold rounded-lg transition-all-theme border cursor-pointer ${
-                        fileExt === ext
-                          ? "bg-[var(--theme-accent-primary)] text-[var(--theme-accent-primary-text)] border-[var(--theme-accent-primary)]"
-                          : "bg-[var(--theme-bg-secondary)] text-[var(--theme-text-secondary)] border-[var(--theme-border-secondary)] hover:border-[var(--theme-text-secondary)]"
-                      }`}
-                    >
-                      {ext.toUpperCase()}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <button
-                onClick={handleDownload}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg bg-[var(--theme-accent-primary)] text-[var(--theme-accent-primary-text)] hover:opacity-90 transition-opacity cursor-pointer"
-              >
-                <Download size={16} /> Download
-              </button>
-            </div>
-          </Card>
-          <Card title="Bulk Generate">
-            <p className="text-sm text-[var(--theme-text-secondary)] mb-4">
-              Create multiple QR codes from a CSV file using the current style
-              settings.
-            </p>
-            <button
-              onClick={() => setShowBulkModal(true)}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg bg-[var(--theme-accent-secondary)] text-white hover:opacity-90 transition-opacity cursor-pointer"
-            >
-              <Upload size={16} /> Upload CSV
-            </button>
-          </Card>
-        </div>
-      </div>
-    </PageWrapper>
-  );
+        <div className="lg:col-span-1 flex flex-col gap-6">
+          <Card
+            title="Preview"
+            className="flex-grow"
+            actions={
+              <button
+                onClick={handleCopy}
+                className="p-1.5 rounded-full text-[var(--theme-text-secondary)] hover:bg-[var(--theme-bg-tertiary)] hover:text-[var(--theme-accent-primary)] transition-all-theme cursor-pointer"
+                title="Copy QR Code to Clipboard"
+              >
+                <Copy size={18} />
+              </button>
+            }
+          >
+            <div className="p-4 bg-[var(--theme-bg-secondary)] rounded-lg flex flex-col items-center justify-center">
+              <div
+                ref={qrRef}
+                className="[&>canvas]:!w-full [&>canvas]:!h-auto [&>svg]:!w-full [&>svg]:!h-auto"
+              />
+              {textLabel && (
+                <p
+                  className="text-center break-words w-full"
+                  style={{
+                    color: textColor,
+                    backgroundColor: textBackgroundColor || "transparent",
+                    marginTop: `${textMargin}px`,
+                    padding: textBackgroundColor ? "10px 5px" : "0",
+                    fontSize: `${textFontSize}px`,
+                    fontFamily: textFontFamily,
+                    fontWeight: fontWeight,
+                    fontStyle: isTextItalic ? "italic" : "normal",
+                  }}
+                >
+                  {textLabel}
+                </p>
+              )}
+            </div>
+          </Card>
+          <Card
+            title="Download"
+            actions={
+              <button
+                onClick={() =>
+                  setDownloadMode((p) =>
+                    p === "simple" ? "advanced" : "simple"
+                  )
+                }
+                className="p-1.5 rounded-full text-[var(--theme-text-secondary)] hover:bg-[var(--theme-bg-tertiary)] hover:text-[var(--theme-accent-primary)] transition-all-theme cursor-pointer"
+                title={
+                  downloadMode === "simple"
+                    ? "Advanced settings"
+                    : "Simple settings"
+                }
+              >
+                <Settings size={18} />
+              </button>
+            }
+          >
+            <div className="space-y-4">
+              {downloadMode === "simple" ? (
+                <LabeledInput label="Quality">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="range"
+                      min="300"
+                      max="4000"
+                      step="100"
+                      value={downloadWidth}
+                      onChange={(e) =>
+                        setDownloadWidth(parseInt(e.target.value))
+                      }
+                    />
+                    <span className="text-xs font-mono text-[var(--theme-text-tertiary)]">
+                      {downloadWidth}px
+                    </span>
+                  </div>
+                </LabeledInput>
+              ) : (
+                <div className="space-y-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <LabeledInput label="Width">
+                      <input
+                        type="number"
+                        value={downloadWidth}
+                        onChange={(e) =>
+                          setDownloadWidth(parseInt(e.target.value) || 0)
+                        }
+                        className="w-full p-2.5 text-sm rounded-lg border border-[var(--theme-border-secondary)] bg-[var(--theme-bg-secondary)] text-[var(--theme-text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--theme-accent-primary)]"
+                      />
+                    </LabeledInput>
+                    <LabeledInput label="Height">
+                      <input
+                        type="number"
+                        value={downloadHeight}
+                        onChange={(e) =>
+                          setDownloadHeight(parseInt(e.target.value) || 0)
+                        }
+                        className="w-full p-2.5 text-sm rounded-lg border border-[var(--theme-border-secondary)] bg-[var(--theme-bg-secondary)] text-[var(--theme-text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--theme-accent-primary)]"
+                      />
+                    </LabeledInput>
+                  </div>
+                  <LabeledInput label="Units">
+                    <CustomSelect
+                      value={downloadUnit}
+                      onChange={(val) => setDownloadUnit(val as any)}
+                      options={unitOptions}
+                    />
+                  </LabeledInput>
+                </div>
+              )}
+
+              <div>
+                <p className="text-sm font-medium text-[var(--theme-text-secondary)] mb-2">
+                  Format
+                </p>
+                <div className="grid grid-cols-4 gap-2">
+                  {["png", "jpeg", "webp", "svg"].map((ext) => (
+                    <button
+                      key={ext}
+                      onClick={() => setFileExt(ext as FileExtension)}
+                      className={`px-3 py-2 text-sm font-semibold rounded-lg transition-all-theme border cursor-pointer ${
+                        fileExt === ext
+                          ? "bg-[var(--theme-accent-primary)] text-[var(--theme-accent-primary-text)] border-[var(--theme-accent-primary)]"
+                          : "bg-[var(--theme-bg-secondary)] text-[var(--theme-text-secondary)] border-[var(--theme-border-secondary)] hover:border-[var(--theme-text-secondary)]"
+                      }`}
+                    >
+                      {ext.toUpperCase()}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <button
+                onClick={handleDownload}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg bg-[var(--theme-accent-primary)] text-[var(--theme-accent-primary-text)] hover:opacity-90 transition-opacity cursor-pointer"
+              >
+                <Download size={16} /> Download
+              </button>
+            </div>
+          </Card>
+          <Card title="Bulk Generate">
+            <p className="text-sm text-[var(--theme-text-secondary)] mb-4">
+              Create multiple QR codes from a CSV file using the current style
+              settings.
+            </p>
+            <button
+              onClick={() => setShowBulkModal(true)}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg bg-[var(--theme-accent-secondary)] text-white hover:opacity-90 transition-opacity cursor-pointer"
+            >
+              <Upload size={16} /> Upload CSV
+            </button>
+          </Card>
+        </div>
+      </div>
+    </PageWrapper>
+  );
 };
 
 const AboutPage = () => (

@@ -617,168 +617,161 @@ const handleCopy = async () => {
     }
   };
 
-const handleDownload = useCallback(async () => {
-  const DPI = 96;
-  const convertToPx = (
-    value: number,
-    unit: "px" | "in" | "cm" | "mm"
-  ): number => {
-    switch (unit) {
-      case "in":
-        return value * DPI;
-      case "cm":
-        return value * (DPI / 2.54);
-      case "mm":
-        return value * (DPI / 25.4);
-      default:
-        return value;
-    }
-  };
+  const handleDownload = useCallback(async () => {
+    const DPI = 96;
+    const convertToPx = (
+      value: number,
+      unit: "px" | "in" | "cm" | "mm"
+    ): number => {
+      switch (unit) {
+        case "in":
+          return value * DPI;
+        case "cm":
+          return value * (DPI / 2.54);
+        case "mm":
+          return value * (DPI / 25.4);
+        default:
+          return value;
+      }
+    };
 
-  // Create a sanitized filename from the first 15 characters of the content
-  const fileNameBase = data
-    .substring(0, 15)
-    .replace(/[^a-z0-9]/gi, "_") // Replace non-alphanumeric chars with underscores
-    .toLowerCase() || "qr_code";
+    const finalPixelWidth = Math.round(convertToPx(downloadWidth, downloadUnit));
 
-  const finalPixelWidth = Math.round(convertToPx(downloadWidth, downloadUnit));
-  const basePreviewWidth = qrOptions.width || 300;
-  const scaledQrMargin = Math.round(
-    (qrOptions.margin || 0) * (finalPixelWidth / basePreviewWidth)
-  );
+    const basePreviewWidth = qrOptions.width || 300;
 
-  let foregroundOptions: Partial<QRCodeStylingOptions> = {};
-  if (colorType === "gradient") {
-    foregroundOptions = {
-      dotsOptions: { ...qrOptions.dotsOptions, gradient },
-      cornersSquareOptions: { ...qrOptions.cornersSquareOptions, gradient },
-      cornersDotOptions: { ...qrOptions.cornersDotOptions, gradient },
-    };
-  }
+    const scaledQrMargin = Math.round(
+      (qrOptions.margin || 0) * (finalPixelWidth / basePreviewWidth)
+    );
 
-  const downloadQr = new QRCodeStyling({
-    ...qrOptions,
-    ...foregroundOptions,
-    width: finalPixelWidth,
-    height: finalPixelWidth,
-    margin: scaledQrMargin,
-    image: logo || undefined,
-    data: data || " ",
-  });
+    let foregroundOptions: Partial<QRCodeStylingOptions> = {};
+    if (colorType === "gradient") {
+      foregroundOptions = {
+        dotsOptions: { ...qrOptions.dotsOptions, gradient },
+        cornersSquareOptions: { ...qrOptions.cornersSquareOptions, gradient },
+        cornersDotOptions: { ...qrOptions.cornersDotOptions, gradient },
+      };
+    }
 
-  // SVG OR NO LABEL: Use the 15-char filename here
-  if (fileExt === "svg" || !textLabel.trim()) {
-    if (fileExt === "svg" && textLabel.trim()) {
-      showToast("Text label is not supported for SVG download.", "info");
-    }
-    downloadQr.download({
-      name: fileNameBase,
-      extension: fileExt,
-    });
-    return;
-  }
+    const downloadQr = new QRCodeStyling({
+      ...qrOptions,
+      ...foregroundOptions,
+      width: finalPixelWidth,
+      height: finalPixelWidth,
+      margin: scaledQrMargin,
+      image: logo || undefined,
+      data: data || " ",
+    });
 
-  // RASTER WITH LABEL: Use the 15-char filename here
-  try {
-    const rawData = await downloadQr.getRawData(fileExt);
-    if (!rawData) throw new Error("Could not get QR code data.");
+    if (fileExt === "svg" || !textLabel.trim()) {
+      if (fileExt === "svg" && textLabel.trim()) {
+        showToast("Text label is not supported for SVG download.", "info");
+      }
+      downloadQr.download({
+        name: "qr-nexus-code",
+        extension: fileExt,
+      });
+      return;
+    }
 
-    const url = URL.createObjectURL(rawData as Blob);
-    const img = new Image();
+    try {
+      const rawData = await downloadQr.getRawData(fileExt);
+      if (!rawData) throw new Error("Could not get QR code data.");
 
-    img.onload = () => {
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-      if (!ctx) return;
+      const url = URL.createObjectURL(rawData as Blob);
+      const img = new Image();
 
-      const scaleFactor = finalPixelWidth / (qrOptions.width || 300);
-      const scaledFontSize = textFontSize * scaleFactor;
-      const scaledTextMargin = textMargin * scaleFactor;
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
 
-      const fontVariant = isTextItalic ? "italic" : "normal";
-      const font = `${fontVariant} ${fontWeight} ${scaledFontSize}px ${textFontFamily}`;
-      ctx.font = font;
+        const scaleFactor = finalPixelWidth / (qrOptions.width || 300);
+        const scaledFontSize = textFontSize * scaleFactor;
+        const scaledTextMargin = textMargin * scaleFactor;
 
-      const textMetrics = ctx.measureText(textLabel);
-      const textHeight =
-        textMetrics.actualBoundingBoxAscent +
-        textMetrics.actualBoundingBoxDescent;
-      const backgroundVPadding = textBackgroundColor ? 10 * scaleFactor : 0;
+        const fontVariant = isTextItalic ? "italic" : "normal";
+        const font = `${fontVariant} ${fontWeight} ${scaledFontSize}px ${textFontFamily}`;
+        ctx.font = font;
 
-      canvas.width = finalPixelWidth;
-      canvas.height =
-        finalPixelWidth +
-        scaledTextMargin +
-        textHeight +
-        backgroundVPadding * 2;
+        const textMetrics = ctx.measureText(textLabel);
+        const textHeight =
+          textMetrics.actualBoundingBoxAscent +
+          textMetrics.actualBoundingBoxDescent;
+        const backgroundVPadding = textBackgroundColor ? 10 * scaleFactor : 0;
 
-      if (fileExt !== "png") {
-        ctx.fillStyle = qrOptions.backgroundOptions?.color || "#ffffff";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-      }
-      ctx.drawImage(img, 0, 0, finalPixelWidth, finalPixelWidth);
+        canvas.width = finalPixelWidth;
+        canvas.height =
+          finalPixelWidth +
+          scaledTextMargin +
+          textHeight +
+          backgroundVPadding * 2;
 
-      const labelYStart = finalPixelWidth + scaledTextMargin;
+        if (fileExt !== "png") {
+          ctx.fillStyle = qrOptions.backgroundOptions?.color || "#ffffff";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+        ctx.drawImage(img, 0, 0, finalPixelWidth, finalPixelWidth);
 
-      if (textBackgroundColor) {
-        ctx.fillStyle = textBackgroundColor;
-        ctx.fillRect(
-          0,
-          labelYStart,
-          canvas.width,
-          textHeight + backgroundVPadding * 2
-        );
-      }
+        const labelYStart = finalPixelWidth + scaledTextMargin;
 
-      ctx.font = font;
-      ctx.fillStyle = textColor;
-      ctx.textAlign = "center";
-      ctx.fillText(
-        textLabel,
-        canvas.width / 2,
-        labelYStart +
-          backgroundVPadding +
-          textMetrics.actualBoundingBoxAscent
-      );
+        if (textBackgroundColor) {
+          ctx.fillStyle = textBackgroundColor;
+          ctx.fillRect(
+            0,
+            labelYStart,
+            canvas.width,
+            textHeight + backgroundVPadding * 2
+          );
+        }
 
-      const link = document.createElement("a");
-      // Applying the 15-character filename to the canvas download
-      link.download = `${fileNameBase}.${fileExt}`;
-      link.href = canvas.toDataURL(`image/${fileExt}`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    };
+        ctx.font = font;
+        ctx.fillStyle = textColor;
+        ctx.textAlign = "center";
+        ctx.fillText(
+          textLabel,
+          canvas.width / 2,
+          labelYStart +
+            backgroundVPadding +
+            textMetrics.actualBoundingBoxAscent
+        );
 
-    img.onerror = () => {
-      showToast("Failed to load QR image for download.", "error");
-      URL.revokeObjectURL(url);
-    };
-    img.src = url;
-  } catch (error) {
-    console.error(error);
-    showToast("An error occurred during download.", "error");
-  }
-}, [
-  data,
-  logo,
-  qrOptions,
-  downloadWidth,
-  downloadUnit,
-  colorType,
-  gradient,
-  fileExt,
-  textLabel,
-  textColor,
-  textMargin,
-  textFontSize,
-  textFontFamily,
-  fontWeight,
-  isTextItalic,
-  textBackgroundColor,
-  showToast,
-]);
+        const link = document.createElement("a");
+        link.download = `qr-nexus-code-with-label.${fileExt}`;
+        link.href = canvas.toDataURL(`image/${fileExt}`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      };
+
+      img.onerror = () => {
+        showToast("Failed to load QR image for download.", "error");
+        URL.revokeObjectURL(url);
+      };
+      img.src = url;
+    } catch (error) {
+      console.error(error);
+      showToast("An error occurred during download.", "error");
+    }
+  }, [
+    data,
+    logo,
+    qrOptions,
+    downloadWidth,
+    downloadUnit,
+    colorType,
+    gradient,
+    fileExt,
+    textLabel,
+    textColor,
+    textMargin,
+    textFontSize,
+    textFontFamily,
+    fontWeight,
+    isTextItalic,
+    textBackgroundColor,
+    showToast,
+  ]);
 
   const bodyShapes: { name: string; value: DotType }[] = [
     { name: "Square", value: "square" },
@@ -1931,10 +1924,6 @@ const BulkGenerateModal: React.FC = () => {
       showToast("Please select a CSV file.", "error");
       return;
     }
-    if (!QRCodeStyling) {
-      showToast("QR Styling library not loaded yet. Please wait.", "error");
-      return;
-    }
     setIsProcessing(true);
     setProgress("Reading CSV file...");
 
@@ -1950,32 +1939,21 @@ const BulkGenerateModal: React.FC = () => {
         }
 
         const zip = new JSZip();
-
         const DPI = 96;
         const convertToPx = (value: number, unit: string): number => {
           switch (unit) {
-            case "in":
-              return value * DPI;
-            case "cm":
-              return value * (DPI / 2.54);
-            case "mm":
-              return value * (DPI / 25.4);
-            default:
-              return value;
+            case "in": return value * DPI;
+            case "cm": return value * (DPI / 2.54);
+            case "mm": return value * (DPI / 25.4);
+            default: return value;
           }
         };
 
-        const finalPixelWidth = Math.round(
-          convertToPx(downloadWidth, downloadUnit)
-        );
+        const finalPixelWidth = Math.round(convertToPx(downloadWidth, downloadUnit));
         const basePreviewWidth = qrOptions.width || 300;
-        const scaledQrMargin = Math.round(
-          (qrOptions.margin || 0) * (finalPixelWidth / basePreviewWidth)
-        );
+        const scaledQrMargin = Math.round((qrOptions.margin || 0) * (finalPixelWidth / basePreviewWidth));
 
-        const canvasToBlob = (
-          canvas: HTMLCanvasElement
-        ): Promise<Blob | null> => {
+        const canvasToBlob = (canvas: HTMLCanvasElement): Promise<Blob | null> => {
           return new Promise((resolve) => {
             canvas.toBlob((blob) => resolve(blob), "image/png");
           });
@@ -1987,27 +1965,17 @@ const BulkGenerateModal: React.FC = () => {
 
           setProgress(`Generating QR ${i + 1} of ${data.length}...`);
 
+          // --- FILENAME LOGIC: First 15 characters of the QR content ---
+          const fileName = row.data
+            .substring(0, 15)
+            .replace(/[^a-z0-9]/gi, "_")
+            .toLowerCase() || `qr_${i + 1}`;
+
           let rowOptions = { ...qrOptions };
-          if (row.dotType)
-            rowOptions.dotsOptions = {
-              ...rowOptions.dotsOptions,
-              type: row.dotType,
-            };
-          if (row.eyeFrameType)
-            rowOptions.cornersSquareOptions = {
-              ...rowOptions.cornersSquareOptions,
-              type: row.eyeFrameType,
-            };
-          if (row.eyeBallType)
-            rowOptions.cornersDotOptions = {
-              ...rowOptions.cornersDotOptions,
-              type: row.eyeBallType,
-            };
-          if (row.bgColor)
-            rowOptions.backgroundOptions = {
-              ...rowOptions.backgroundOptions,
-              color: row.bgColor,
-            };
+          if (row.dotType) rowOptions.dotsOptions = { ...rowOptions.dotsOptions, type: row.dotType };
+          if (row.eyeFrameType) rowOptions.cornersSquareOptions = { ...rowOptions.cornersSquareOptions, type: row.eyeFrameType };
+          if (row.eyeBallType) rowOptions.cornersDotOptions = { ...rowOptions.cornersDotOptions, type: row.eyeBallType };
+          if (row.bgColor) rowOptions.backgroundOptions = { ...rowOptions.backgroundOptions, color: row.bgColor };
 
           let foregroundOptions: Partial<QRCodeStylingOptions> = {};
           if (row.gradientStart && row.gradientEnd) {
@@ -2050,32 +2018,28 @@ const BulkGenerateModal: React.FC = () => {
 
           const tempQr = new QRCodeStyling(finalOptions);
           const rawData = await tempQr.getRawData("png");
-
           if (!rawData) continue;
 
           let finalBlob: Blob | null = rawData as Blob;
           const label = row.label || "";
 
+          // Handle drawing text label on canvas if label exists in CSV
           if (label.trim()) {
             const localTextColor = row.labelColor || textColor;
             const localTextMargin = parseInt(row.labelMargin) || textMargin;
             const localTextSize = parseInt(row.labelSize) || textFontSize;
             const localFont = row.labelFont || textFontFamily;
             const localFontWeight = row.labelWeight || fontWeight;
-            const localItalic = row.labelItalic
-              ? row.labelItalic === "true"
-              : isTextItalic;
+            const localItalic = row.labelItalic ? row.labelItalic === "true" : isTextItalic;
             const localBgColor = row.labelBgColor || textBackgroundColor;
 
             const url = URL.createObjectURL(rawData as Blob);
-            const img = await new Promise<HTMLImageElement>(
-              (resolve, reject) => {
-                const image = new Image();
-                image.onload = () => resolve(image);
-                image.onerror = reject;
-                image.src = url;
-              }
-            );
+            const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+              const image = new Image();
+              image.onload = () => resolve(image);
+              image.onerror = reject;
+              image.src = url;
+            });
             URL.revokeObjectURL(url);
 
             const canvas = document.createElement("canvas");
@@ -2084,23 +2048,16 @@ const BulkGenerateModal: React.FC = () => {
               const scaleFactor = finalPixelWidth / (qrOptions.width || 300);
               const scaledFontSize = localTextSize * scaleFactor;
               const scaledTextMargin = localTextMargin * scaleFactor;
-
               const fontVariant = localItalic ? "italic" : "normal";
               const font = `${fontVariant} ${localFontWeight} ${scaledFontSize}px ${localFont}`;
+              
               ctx.font = font;
-
               const textMetrics = ctx.measureText(label);
-              const textHeight =
-                textMetrics.actualBoundingBoxAscent +
-                textMetrics.actualBoundingBoxDescent;
+              const textHeight = textMetrics.actualBoundingBoxAscent + textMetrics.actualBoundingBoxDescent;
               const backgroundVPadding = localBgColor ? 10 * scaleFactor : 0;
 
               canvas.width = img.width;
-              canvas.height =
-                img.height +
-                scaledTextMargin +
-                textHeight +
-                backgroundVPadding * 2;
+              canvas.height = img.height + scaledTextMargin + textHeight + (backgroundVPadding * 2);
 
               if (finalOptions.backgroundOptions?.color) {
                 ctx.fillStyle = finalOptions.backgroundOptions.color;
@@ -2111,34 +2068,19 @@ const BulkGenerateModal: React.FC = () => {
 
               if (localBgColor) {
                 ctx.fillStyle = localBgColor;
-                ctx.fillRect(
-                  0,
-                  img.height + scaledTextMargin,
-                  canvas.width,
-                  textHeight + backgroundVPadding * 2
-                );
+                ctx.fillRect(0, img.height + scaledTextMargin, canvas.width, textHeight + (backgroundVPadding * 2));
               }
 
               ctx.font = font;
               ctx.fillStyle = localTextColor;
               ctx.textAlign = "center";
-              ctx.fillText(
-                label,
-                canvas.width / 2,
-                img.height +
-                  scaledTextMargin +
-                  backgroundVPadding +
-                  textMetrics.actualBoundingBoxAscent
-              );
-
+              ctx.fillText(label, canvas.width / 2, img.height + scaledTextMargin + backgroundVPadding + textMetrics.actualBoundingBoxAscent);
               finalBlob = await canvasToBlob(canvas);
             }
           }
 
           if (finalBlob) {
-            const fileName =
-              label.replace(/[^a-z0-9]/gi, "_").toLowerCase() ||
-              `qr_code_${i + 1}`;
+            // Append the file using the sanitized content-based name
             zip.file(`${fileName}.png`, finalBlob);
           }
         }
@@ -2159,33 +2101,20 @@ const BulkGenerateModal: React.FC = () => {
   };
 
   return (
-    <Modal
-      isOpen={showBulkModal}
-      onClose={resetModal}
-      title="Bulk QR Code Generation"
-      size="md"
-    >
+    <Modal isOpen={showBulkModal} onClose={resetModal} title="Bulk QR Code Generation" size="md">
       {isProcessing ? (
         <div className="flex flex-col items-center justify-center space-y-4 p-8">
           <Loader size={48} className="animate-spin-slow" />
           <p className="font-semibold text-lg">{progress}</p>
-          <p className="text-sm text-[var(--theme-text-secondary)]">
-            Please wait, this may take a moment...
-          </p>
+          <p className="text-sm text-[var(--theme-text-secondary)]">Please wait, this may take a moment...</p>
         </div>
       ) : (
         <div className="space-y-4">
           <p className="text-sm text-[var(--theme-text-secondary)]">
-            Upload a CSV file. It must have a `data` column. You can add
-            optional columns for per-row styling (e.g., `label`, `fgColor`,
-            `bgColor`, `gradientStart`, `dotType`, `labelColor`, `labelSize`,
-            `labelWeight`).
+            Upload a CSV file. It must have a <strong>data</strong> column. Files inside the ZIP will be named based on the first 15 characters of the content.
           </p>
           <div>
-            <label
-              htmlFor="csv-upload"
-              className="w-full flex flex-col items-center justify-center cursor-pointer p-6 text-sm font-medium rounded-lg border-2 border-dashed border-[var(--theme-border-secondary)] text-[var(--theme-text-secondary)] hover:bg-[var(--theme-bg-tertiary)] hover:border-[var(--theme-accent-primary)] transition-all-theme"
-            >
+            <label htmlFor="csv-upload" className="w-full flex flex-col items-center justify-center cursor-pointer p-6 text-sm font-medium rounded-lg border-2 border-dashed border-[var(--theme-border-secondary)] text-[var(--theme-text-secondary)] hover:bg-[var(--theme-bg-tertiary)] hover:border-[var(--theme-accent-primary)] transition-all-theme">
               {file ? (
                 <>
                   <FileText size={32} className="mb-2" />
@@ -2198,26 +2127,13 @@ const BulkGenerateModal: React.FC = () => {
                 </>
               )}
             </label>
-            <input
-              type="file"
-              id="csv-upload"
-              accept=".csv"
-              className="hidden"
-              onChange={handleFileChange}
-            />
+            <input type="file" id="csv-upload" accept=".csv" className="hidden" onChange={handleFileChange} />
           </div>
           <div className="flex justify-end space-x-3 pt-2">
-            <button
-              onClick={resetModal}
-              className="px-4 py-2 text-sm font-medium rounded-lg border border-[var(--theme-border-secondary)] text-[var(--theme-text-secondary)] hover:bg-[var(--theme-bg-tertiary)] transition-all-theme cursor-pointer"
-            >
+            <button onClick={resetModal} className="px-4 py-2 text-sm font-medium rounded-lg border border-[var(--theme-border-secondary)] text-[var(--theme-text-secondary)] hover:bg-[var(--theme-bg-tertiary)] transition-all-theme cursor-pointer">
               Cancel
             </button>
-            <button
-              onClick={handleGenerate}
-              disabled={!file}
-              className="px-4 py-2 text-sm font-medium rounded-lg bg-[var(--theme-accent-primary)] text-white hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
-            >
+            <button onClick={handleGenerate} disabled={!file} className="px-4 py-2 text-sm font-medium rounded-lg bg-[var(--theme-accent-primary)] text-white hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed">
               Generate ZIP
             </button>
           </div>
